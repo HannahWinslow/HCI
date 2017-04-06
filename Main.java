@@ -1,158 +1,155 @@
 package application;
 	
+
+
+
+
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
+import javafx.geometry.Insets;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.geometry.Insets;
+import javafx.scene.text.Font;
+
+import javafx.scene.text.Text;
+
 
 public class Main extends Application {
-	 private final ObservableList<Person> data =
-		        FXCollections.observableArrayList(
-		            new Person("Jacob", "Smith", "jacob.smith@example.com"),
-		            new Person("Isabella", "Johnson", "isabella.johnson@example.com"),
-		            new Person("Ethan", "Williams", "ethan.williams@example.com"),
-		            new Person("Emma", "Jones", "emma.jones@example.com"),
-		            new Person("Michael", "Brown", "michael.brown@example.com")
-		        );
+	Stage myStage;
+	Scene loginScene, mainScene;
+	Image icon;
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			//create a table to see data
-			TableView table = new TableView();
-			Label label = new Label("Address Book");
-			table.setEditable(true);
-			TableColumn nameCol = new TableColumn("First Name");
-			nameCol.setMinWidth(100);
-			nameCol.setCellValueFactory(new PropertyValueFactory<Person, String>("firstName"));
-		    TableColumn ssnCol = new TableColumn("Social security number");
-		    TableColumn genderCol = new TableColumn("Gender");
-		    TableColumn protocolNumberCol = new TableColumn("Protocol Number");
-		    TableColumn protocolCol = new TableColumn("protocol");
-		    table.getColumns().addAll(nameCol, ssnCol, genderCol, protocolCol, protocolNumberCol);
-		    VBox boxTable = new VBox();
-		    table.setItems(data);
-		    boxTable.setSpacing(5);
-		    boxTable.setPadding(new Insets(10, 0, 0, 10));
-		    boxTable.getChildren().addAll(label, table);
-	        
-			BorderPane root = new BorderPane();
-			Scene scene = new Scene(root,400,400);
 			
-			//A series of box to create the form
-			HBox box = new HBox();
-			VBox box3 = new VBox();
-			HBox box1 = new HBox();
-			HBox box2 = new HBox();
-			HBox box4 = new HBox();
-			HBox box5 = new HBox();
-			HBox box6 = new HBox();
+			//Set up login page and main page
+			loginPage();
+			mainPage();
 			
-			//create a test menu bar
-			MenuBar bar = new MenuBar();
-			Menu file = new Menu( "File" );
-			MenuItem addInfo = new MenuItem( "Add Patient" );
-			MenuItem seeData = new MenuItem( "Data Check" );
-			seeData.setOnAction( (e) -> {
-				root.setCenter(boxTable);
-			} );
-			MenuItem quit = new MenuItem( "Quit" );
-			quit.setOnAction( (e) -> {
-				primaryStage.close();
-			} );
-			file.getItems().add( addInfo );
-			file.getItems().add( seeData );
-			file.getItems().add( quit );
-			bar.getMenus().addAll(file);
 			
-			Button sub = new Button( "Submit" );
-			Button clear = new Button( "Clear" );
-			box.getChildren().addAll(sub, clear);
-			box.setSpacing(10);
-			Label label1 = new Label("Name: ");
-			Label label2 = new Label("Social security number: ");
-			Label label3 = new Label("Gender: ");
-			Label label4 = new Label("Protocol: ");
-			Label label5 = new Label("Protocol number: ");
 			
-			TextField textField = new TextField ();
-			TextField textField1 = new TextField ();
-			TextField textField2 = new TextField ();
-			TextField textField3 = new TextField ();
-			TextField textField4 = new TextField ();
-			box1.getChildren().addAll(label1, textField);
-			box1.setSpacing(10);
-			box2.getChildren().addAll(label2, textField1);
-			box2.setSpacing(10);
-			box4.getChildren().addAll(label3, textField2);
-			box4.setSpacing(10);
-			box5.getChildren().addAll(label4, textField3);
-			box5.setSpacing(10);
-			box6.getChildren().addAll(label5, textField4);
-			box6.setSpacing(10);
-			box3.getChildren().addAll(box1, box2, box4, box5, box6);
+			//So the stage can be used by any method
+			myStage = primaryStage;
+		
 			
-			root.setCenter(box3);
-			root.setTop(bar);
-			root.setBottom(box);
-			primaryStage.setScene(scene);
+			
+			
+			//Set details of primary stage
+			primaryStage.setTitle("Patient Data Tool");
+			primaryStage.setScene(loginScene);			//Initial scene
 			primaryStage.show();
-			
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public static void main(String[] args) {
-		launch(args);
+	public void loginPage() {
+		
+		//Create new layout for login page
+		GridPane root = new GridPane();		
+		root.setAlignment(Pos.CENTER);
+		root.setHgap(10);
+		root.setVgap(10);
+		root.setPadding(new Insets(25, 25, 25, 25));
+		
+		//Sign in title
+		Text scenetitle = new Text("Sign In");
+		scenetitle.setFont(Font.font("Calibri", 25));
+		root.add(scenetitle, 0, 0, 2, 1);
+		
+		//Labels and Text Fields for User Name and Password
+		Label userNameLabel = new Label("User Name:");
+		root.add(userNameLabel, 0, 1);
+
+		TextField userNameTextField = new TextField();
+		root.add(userNameTextField, 1, 1);
+
+		Label passwordLabel = new Label("Password:");
+		root.add(passwordLabel, 0, 2);
+
+		PasswordField passwordTextField = new PasswordField();
+		root.add(passwordTextField, 1, 2);
+		
+		
+		//Create Sign in Button
+		Button signInButton = new Button("Sign in");
+		HBox hBox = new HBox(10);
+		hBox.setAlignment(Pos.BOTTOM_RIGHT);
+		hBox.getChildren().add(signInButton);
+		root.add(hBox, 1, 4);
+		
+		//Event handler for Sign in button
+		signInButton.setOnAction(e -> {
+			//Eventually, this will need to switch to a different
+			//scene based upon the level of the user, but for now,
+			//we will just switch to a scene that has all access
+			myStage.setScene(mainScene);
+			
+        });
+		
+		//Create scene
+		loginScene = new Scene(root,400,400);
 	}
 	
-	public class Person {
-		 private  String firstName;
-	     private  String lastName;
-	     private  String email;
+	public void mainPage() {
+		
+		//Create layout for main page
+		GridPane grid = new GridPane();		//Layout for main menu
+		grid.setAlignment(Pos.CENTER);
+		grid.setHgap(10);
+		grid.setVgap(10);
+		grid.setPadding(new Insets(25, 25, 25, 25));
+		
+		//Label for image
+		icon = new Image(getClass().getResourceAsStream("medical icon.png"));
+		
+		Label i = new Label();
+		
+		i.setGraphic(new ImageView(icon));
+		grid.add(i,0,0);
+		i.setPadding(new Insets(0,0,0,40));
 
-	     private Person(String fName, String lName, String email) {
-	         this.firstName = new String(fName);
-	         this.lastName = new String(lName);
-	         this.email = new String(email);
-	     }
-
-	     public String getFirstName() {
-	         return firstName;
-	     }
-
-	     public void setFirstName(String fName) {
-	         firstName = fName;
-	     }
-
-	     public String getLastName() {
-	         return lastName;
-	     }
-
-	     public void setLastName(String fName) {
-	         lastName = fName;
-	     }
-
-	     public String getEmail() {
-	         return email;
-	     }
-
-	     public void setEmail(String fName) {
-	         email = fName;
-	     }
+		
+		//Create buttons for all forms
+		Button patientDataButton = new Button("Search Patient Data");
+		patientDataButton.setMinHeight(40);
+		patientDataButton.setFont(Font.font("Calibri", 15));
+		patientDataButton.setMinWidth(200);
+		grid.add(patientDataButton, 0, 2, 2, 1);
+		Button userForm = new Button("User Form");
+		Button patientForm = new Button("Patient Form");
+		Button trialForm = new Button("Clinical Trial Form");
+		Button taskForm = new Button("Task Form");
+		
+		//Make all buttons same width
+		userForm.setMaxWidth(Double.MAX_VALUE);
+		patientForm.setMaxWidth(Double.MAX_VALUE);
+		trialForm.setMaxWidth(Double.MAX_VALUE);
+		taskForm.setMaxWidth(Double.MAX_VALUE);
+		
+		//Add all buttons to grid
+		grid.add(patientForm, 0, 4, 2, 1);
+		grid.add(userForm, 0, 5, 2, 1);
+		grid.add(trialForm, 0, 6, 2, 1);
+		grid.add(taskForm, 0, 7, 2, 1);
+		
+		
+		
+		//Create scene
+		mainScene = new Scene(grid,400,400);
+		
+	
+	}
+	
+	public static void main(String[] args) {
+		launch(args);
 	}
 }
