@@ -4,19 +4,36 @@ package application;
 
 
 
+
+
 import javafx.application.Application;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.geometry.Insets;
 import javafx.stage.Stage;
+import javafx.util.Callback;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TableColumn.CellEditEvent;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
 import javafx.scene.text.Text;
@@ -24,7 +41,7 @@ import javafx.scene.text.Text;
 
 public class Main extends Application {
 	Stage myStage;
-	Scene loginScene, mainScene, taskScene;
+	Scene loginScene, mainScene, taskScene, userScene; 
 	Image icon;
 	@Override
 	public void start(Stage primaryStage) {
@@ -34,7 +51,7 @@ public class Main extends Application {
 			loginPage();
 			mainPage();
 			taskPage();
-			
+			userPage();
 			
 			
 			//So the stage can be used by any method
@@ -150,7 +167,13 @@ public class Main extends Application {
 		
 		//UN COMMENT THESE WHEN EVERYONES FORMS ARE ADDED TO THIS PROJECT
 		userForm.setOnAction(e -> {
-			//myStage.setScene(userScene);
+			
+			myStage.setScene(userScene);
+		
+			
+			
+			
+			
         });
 		
 		patientForm.setOnAction(e -> {
@@ -167,6 +190,278 @@ public class Main extends Application {
 		mainScene = new Scene(grid,400,400);
 		
 	
+	}
+	
+	/*
+	 * Author: Betsie Koshy 
+	 * 
+	 */
+	public void userPage(){
+		
+		GridPane grid = new GridPane();
+	    grid.setHgap(10);
+	    grid.setVgap(12);
+
+	    HBox hbButtons = new HBox();
+	    hbButtons.setSpacing(10.0);
+
+	    Button createUsers = new Button("Create Users");
+	    Button createPT = new Button("Create Patient Trials");
+
+	    createUsers.setMaxWidth(Double.MAX_VALUE);
+	    createPT.setMaxWidth(Double.MAX_VALUE);
+	   
+	   
+
+	    hbButtons.getChildren().addAll(createUsers, createPT);
+	 
+	    
+	    grid.add(hbButtons, 8, 15, 15, 1);
+		
+
+		userScene = new Scene(grid,400,400);
+		
+		createUsers.setOnAction(e -> {
+			
+			TableView<Person> table = new TableView<Person>();
+		    final ObservableList<Person> data =
+		            FXCollections.observableArrayList(
+		            new Person("Jacob", "Smith", "405-495-4343")
+		            );
+		    
+		    final HBox hb = new HBox();
+		    
+		    Scene scene = new Scene(new Group());
+		    Stage stage2 = new Stage();
+		    
+		    stage2.setTitle("User Information Table");
+	        stage2.setWidth(450);
+	        stage2.setHeight(550);
+	 
+	        final Label label = new Label("Users");
+	        label.setFont(new Font("Arial", 20));
+	 
+	        table.setEditable(true);
+	        Callback<TableColumn, TableCell> cellFactory =
+	             new Callback<TableColumn, TableCell>() {
+	                 public TableCell call(TableColumn p) {
+	                    return new EditingCell();
+	                 }
+	             };
+	 
+	        TableColumn firstNameCol = new TableColumn("First Name");
+	        firstNameCol.setMinWidth(100);
+	        firstNameCol.setCellValueFactory(
+	            new PropertyValueFactory<Person, String>("firstName"));
+	        firstNameCol.setCellFactory(cellFactory);
+	        firstNameCol.setOnEditCommit(
+	            new EventHandler<CellEditEvent<Person, String>>() {
+	                @Override
+	                public void handle(CellEditEvent<Person, String> t) {
+	                    ((Person) t.getTableView().getItems().get(
+	                        t.getTablePosition().getRow())
+	                        ).setFirstName(t.getNewValue());
+	                }
+	             }
+	        );
+	 
+	 
+	        TableColumn lastNameCol = new TableColumn("Last Name");
+	        lastNameCol.setMinWidth(100);
+	        lastNameCol.setCellValueFactory(
+	            new PropertyValueFactory<Person, String>("lastName"));
+	        lastNameCol.setCellFactory(cellFactory);
+	        lastNameCol.setOnEditCommit(
+	            new EventHandler<CellEditEvent<Person, String>>() {
+	                @Override
+	                public void handle(CellEditEvent<Person, String> t) {
+	                    ((Person) t.getTableView().getItems().get(
+	                        t.getTablePosition().getRow())
+	                        ).setLastName(t.getNewValue());
+	                }
+	            }
+	        );
+	 
+	        TableColumn emailCol = new TableColumn("Phone Number");
+	        emailCol.setMinWidth(200);
+	        emailCol.setCellValueFactory(
+	            new PropertyValueFactory<Person, String>("phoneNumber"));
+	        emailCol.setCellFactory(cellFactory);
+	        emailCol.setOnEditCommit(
+	            new EventHandler<CellEditEvent<Person, String>>() {
+	                @Override
+	                public void handle(CellEditEvent<Person, String> t) {
+	                    ((Person) t.getTableView().getItems().get(
+	                        t.getTablePosition().getRow())
+	                        ).setPhoneNumber(t.getNewValue());
+	                }
+	            }
+	        );
+	 
+	        table.setItems(data);
+	        table.getColumns().addAll(firstNameCol, lastNameCol, emailCol);
+	 
+	        final TextField addFirstName = new TextField();
+	        addFirstName.setPromptText("First Name");
+	        addFirstName.setMaxWidth(firstNameCol.getPrefWidth());
+	        final TextField addLastName = new TextField();
+	        addLastName.setMaxWidth(lastNameCol.getPrefWidth());
+	        addLastName.setPromptText("Last Name");
+	        final TextField addEmail = new TextField();
+	        addEmail.setMaxWidth(emailCol.getPrefWidth());
+	        addEmail.setPromptText("Phone Number");
+	 
+	        final Button addButton = new Button("Add");
+	        addButton.setOnAction(new EventHandler<ActionEvent>() {
+	            @Override
+	            public void handle(ActionEvent e) {
+	                data.add(new Person(
+	                        addFirstName.getText(),
+	                        addLastName.getText(),
+	                        addEmail.getText()));
+	                addFirstName.clear();
+	                addLastName.clear();
+	                addEmail.clear();
+	            }
+	        });
+	 
+	        hb.getChildren().addAll(addFirstName, addLastName, addEmail, addButton);
+	        hb.setSpacing(3);
+	 
+	        final VBox vbox = new VBox();
+	        vbox.setSpacing(5);
+	        vbox.setPadding(new Insets(10, 0, 0, 10));
+	        vbox.getChildren().addAll(label, table, hb);
+	 
+	        ((Group) scene.getRoot()).getChildren().addAll(vbox);
+	 
+	        stage2.setScene(scene);
+	        stage2.show();
+			
+			
+        });
+		
+		
+		//Create clinical trials 
+		
+		createPT.setOnAction(e -> {
+			TableView<ClinicalTrials> table = new TableView<ClinicalTrials>();
+		    final ObservableList<ClinicalTrials> data =
+		            FXCollections.observableArrayList(
+		            new ClinicalTrials("Name", "Trial", "Sponsor")
+		            );
+		    
+		    final HBox hb = new HBox();
+		    
+		    Scene scene = new Scene(new Group());
+		    Stage stage2 = new Stage();
+		    
+		    stage2.setTitle("Clinical Trials");
+	        stage2.setWidth(450);
+	        stage2.setHeight(550);
+	 
+	        final Label label = new Label("Users");
+	        label.setFont(new Font("Arial", 20));
+	 
+	        table.setEditable(true);
+	        Callback<TableColumn, TableCell> cellFactory =
+	             new Callback<TableColumn, TableCell>() {
+	                 public TableCell call(TableColumn p) {
+	                    return new EditingCell();
+	                 }
+	             };
+	 
+	        TableColumn nameCol = new TableColumn("Name");
+	        nameCol.setMinWidth(100);
+	        nameCol.setCellValueFactory(
+	            new PropertyValueFactory<ClinicalTrials, String>("name"));
+	        nameCol.setCellFactory(cellFactory);
+	        nameCol.setOnEditCommit(
+	            new EventHandler<CellEditEvent<ClinicalTrials, String>>() {
+	                @Override
+	                public void handle(CellEditEvent<ClinicalTrials, String> t) {
+	                    ((ClinicalTrials) t.getTableView().getItems().get(
+	                        t.getTablePosition().getRow())
+	                        ).setName(t.getNewValue());
+	                }
+	             }
+	        );
+	 
+	 
+	        TableColumn trialCol = new TableColumn("Trial ");
+	        trialCol.setMinWidth(100);
+	        trialCol.setCellValueFactory(
+	            new PropertyValueFactory<ClinicalTrials, String>("trial"));
+	        trialCol.setCellFactory(cellFactory);
+	        trialCol.setOnEditCommit(
+	            new EventHandler<CellEditEvent<ClinicalTrials, String>>() {
+	                @Override
+	                public void handle(CellEditEvent<ClinicalTrials, String> t) {
+	                    ((ClinicalTrials) t.getTableView().getItems().get(
+	                        t.getTablePosition().getRow())
+	                        ).setTrial(t.getNewValue());
+	                }
+	            }
+	        );
+	 
+	        TableColumn sponsorCol = new TableColumn("Sponsor");
+	        sponsorCol.setMinWidth(200);
+	        sponsorCol.setCellValueFactory(
+	            new PropertyValueFactory<ClinicalTrials, String>("sponsor"));
+	        sponsorCol.setCellFactory(cellFactory);
+	        sponsorCol.setOnEditCommit(
+	            new EventHandler<CellEditEvent<ClinicalTrials, String>>() {
+	                @Override
+	                public void handle(CellEditEvent<ClinicalTrials, String> t) {
+	                    ((ClinicalTrials) t.getTableView().getItems().get(
+	                        t.getTablePosition().getRow())
+	                        ).setSponsor(t.getNewValue());
+	                }
+	            }
+	        );
+	 
+	        table.setItems(data);
+	        table.getColumns().addAll(nameCol, trialCol, sponsorCol);
+	 
+	        final TextField addName = new TextField();
+	        addName.setPromptText("Name");
+	        addName.setMaxWidth(nameCol.getPrefWidth());
+	        final TextField addTrial = new TextField();
+	        addTrial.setMaxWidth(trialCol.getPrefWidth());
+	        addTrial.setPromptText("Trial");
+	        final TextField addSponsor = new TextField();
+	        addSponsor.setMaxWidth(sponsorCol.getPrefWidth());
+	        addSponsor.setPromptText("Sponsor");
+	 
+	        final Button addButton = new Button("Add");
+	        addButton.setOnAction(new EventHandler<ActionEvent>() {
+	            @Override
+	            public void handle(ActionEvent e) {
+	                data.add(new ClinicalTrials(
+	                        addName.getText(),
+	                        addTrial.getText(),
+	                        addSponsor.getText()));
+	                addName.clear();
+	                addTrial.clear();
+	                addSponsor.clear();
+	            }
+	        });
+	 
+	        hb.getChildren().addAll(addName, addTrial, addSponsor, addButton);
+	        hb.setSpacing(3);
+	 
+	        final VBox vbox = new VBox();
+	        vbox.setSpacing(5);
+	        vbox.setPadding(new Insets(10, 0, 0, 10));
+	        vbox.getChildren().addAll(label, table, hb);
+	 
+	        ((Group) scene.getRoot()).getChildren().addAll(vbox);
+	 
+	        stage2.setScene(scene);
+	        stage2.show();
+			
+        });
+		
 	}
 	
 	public void taskPage() {
@@ -238,7 +533,225 @@ public class Main extends Application {
 	     }		 	
 	}
 	
+	/*
+	 * Class for users
+	 * Author: Betsie Koshy 
+	 * 
+	 */
+	   public static class Person {
+			 
+	        private final SimpleStringProperty firstName;
+	        private final SimpleStringProperty lastName;
+	        private final SimpleStringProperty phoneNumber;
+	        //private final SimpleStringProperty clinicalTrial;
+	 
+	        private Person(String fName, String lName, String phoneNumber) {
+	            this.firstName = new SimpleStringProperty(fName);
+	            this.lastName = new SimpleStringProperty(lName);
+	            this.phoneNumber = new SimpleStringProperty(phoneNumber);
+	        }
+	 
+	        public String getFirstName() {
+	            return firstName.get();
+	        }
+	 
+	        public void setFirstName(String fName) {
+	            firstName.set(fName);
+	        }
+	 
+	        public String getLastName() {
+	            return lastName.get();
+	        }
+	 
+	        public void setLastName(String fName) {
+	            lastName.set(fName);
+	        }
+	 
+	        public String getPhoneNumber() {
+	            return phoneNumber.get();
+	        }
+	 
+	        public void setPhoneNumber(String fName) {
+	            phoneNumber.set(fName);
+	        }
+	    }
+	 
+	    class EditingCell extends TableCell<Person, String> {
+	 
+	        private TextField textField;
+	 
+	        public EditingCell() {
+	        }
+	 
+	        @Override
+	        public void startEdit() {
+	            if (!isEmpty()) {
+	                super.startEdit();
+	                createTextField();
+	                setText(null);
+	                setGraphic(textField);
+	                textField.selectAll();
+	            }
+	        }
+	 
+	        @Override
+	        public void cancelEdit() {
+	            super.cancelEdit();
+	 
+	            setText((String) getItem());
+	            setGraphic(null);
+	        }
+	 
+	        @Override
+	        public void updateItem(String item, boolean empty) {
+	            super.updateItem(item, empty);
+	 
+	            if (empty) {
+	                setText(null);
+	                setGraphic(null);
+	            } else {
+	                if (isEditing()) {
+	                    if (textField != null) {
+	                        textField.setText(getString());
+	                    }
+	                    setText(null);
+	                    setGraphic(textField);
+	                } else {
+	                    setText(getString());
+	                    setGraphic(null);
+	                }
+	            }
+	        }
+	 
+	        private void createTextField() {
+	            textField = new TextField(getString());
+	            textField.setMinWidth(this.getWidth() - this.getGraphicTextGap()* 2);
+	            textField.focusedProperty().addListener(new ChangeListener<Boolean>(){
+	                @Override
+	                public void changed(ObservableValue<? extends Boolean> arg0, 
+	                    Boolean arg1, Boolean arg2) {
+	                        if (!arg2) {
+	                            commitEdit(textField.getText());
+	                        }
+	                }
+	            });
+	        }
+	 
+	        private String getString() {
+	            return getItem() == null ? "" : getItem().toString();
+	        }
+	    }
+	
+	    
+	    public static class ClinicalTrials {
+			 
+	        private final SimpleStringProperty name;
+	        private final SimpleStringProperty trial;
+	        private final SimpleStringProperty sponsor;
+	        
+	 
+	        private ClinicalTrials(String name, String trial, String sponsor) {
+	            this.name = new SimpleStringProperty(name);
+	            this.trial = new SimpleStringProperty(trial);
+	            this.sponsor = new SimpleStringProperty(trial);
+	        }
+	 
+	        public String getName() {
+	            return name.get();
+	        }
+	 
+	        public void setName(String fName) {
+	            name.set(fName);
+	        }
+	 
+	        
+	        public String getTrial() {
+	            return trial.get();
+	        }
+	 
+	        public void setTrial(String ptrial) {
+	            trial.set(ptrial);
+	        }
+	        
+	        public String getSponsor() {
+	            return sponsor.get();
+	        }
+	 
+	        public void setSponsor(String sp) {
+	            sponsor.set(sp);
+	        }
+	    }
+	 
+	    class EditingCell2 extends TableCell<ClinicalTrials, String> {
+	 
+	        private TextField textField;
+	 
+	        public EditingCell2() {
+	        }
+	 
+	        @Override
+	        public void startEdit() {
+	            if (!isEmpty()) {
+	                super.startEdit();
+	                createTextField();
+	                setText(null);
+	                setGraphic(textField);
+	                textField.selectAll();
+	            }
+	        }
+	 
+	        @Override
+	        public void cancelEdit() {
+	            super.cancelEdit();
+	 
+	            setText((String) getItem());
+	            setGraphic(null);
+	        }
+	 
+	        @Override
+	        public void updateItem(String item, boolean empty) {
+	            super.updateItem(item, empty);
+	 
+	            if (empty) {
+	                setText(null);
+	                setGraphic(null);
+	            } else {
+	                if (isEditing()) {
+	                    if (textField != null) {
+	                        textField.setText(getString());
+	                    }
+	                    setText(null);
+	                    setGraphic(textField);
+	                } else {
+	                    setText(getString());
+	                    setGraphic(null);
+	                }
+	            }
+	        }
+	 
+	        private void createTextField() {
+	            textField = new TextField(getString());
+	            textField.setMinWidth(this.getWidth() - this.getGraphicTextGap()* 2);
+	            textField.focusedProperty().addListener(new ChangeListener<Boolean>(){
+	                @Override
+	                public void changed(ObservableValue<? extends Boolean> arg0, 
+	                    Boolean arg1, Boolean arg2) {
+	                        if (!arg2) {
+	                            commitEdit(textField.getText());
+	                        }
+	                }
+	            });
+	        }
+	 
+	        private String getString() {
+	            return getItem() == null ? "" : getItem().toString();
+	        }
+	    }
+	    
+	    
 	public static void main(String[] args) {
 		launch(args);
 	}
 }
+
+
