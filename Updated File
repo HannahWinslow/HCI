@@ -821,7 +821,8 @@ public class Main extends Application {
 	
 	Scene sceneData;
 	
-		public void patientPage() {
+			public void patientPage() {
+			
 		Stage stage2 = new Stage();
 		stage2.setTitle("Patient");
         BorderPane root = new BorderPane();
@@ -829,7 +830,6 @@ public class Main extends Application {
 		final Label label = new Label("Patient");
 		label.setFont(new Font("Arial", 20));
 		stage2.setScene(sceneData);
-		
 		//A series of box to create the form
 		HBox box = new HBox();
 		VBox box3 = new VBox();
@@ -853,29 +853,103 @@ public class Main extends Application {
 		//create a table to see data
 		TableView table = new TableView();
 		table.setEditable(true);
+		
+		Callback<TableColumn, TableCell> cellFactory =
+                new Callback<TableColumn, TableCell>() {
+                    public TableCell call(TableColumn p) {
+                       return new EditingCell();
+                    }
+                };
+                
 		TableColumn nameCol = new TableColumn("First Name");
 		nameCol.setMinWidth(100);
 		nameCol.setCellValueFactory(new PropertyValueFactory<Patient, String>("FirstName"));
+		nameCol.setCellFactory(TextFieldTableCell.forTableColumn());
+		nameCol.setOnEditCommit(
+            new EventHandler<CellEditEvent<Patient, String>>() {
+                @Override
+                public void handle(CellEditEvent<Patient, String> t) {
+                    ((Patient) t.getTableView().getItems().get(
+                        t.getTablePosition().getRow())
+                        ).setFirstName(t.getNewValue());
+                }
+            }
+        );
 		
 		TableColumn lastCol = new TableColumn("Last Name");
 		lastCol.setMinWidth(100);
 		lastCol.setCellValueFactory(new PropertyValueFactory<Patient, String>("LastName"));
+		lastCol.setCellFactory(TextFieldTableCell.forTableColumn());
+		lastCol.setOnEditCommit(
+            new EventHandler<CellEditEvent<Patient, String>>() {
+                @Override
+                public void handle(CellEditEvent<Patient, String> t) {
+                    ((Patient) t.getTableView().getItems().get(
+                        t.getTablePosition().getRow())
+                        ).setLastName(t.getNewValue());
+                }
+            }
+        );
 		
 	    TableColumn ssnCol = new TableColumn("Social security number");
 	    ssnCol.setMinWidth(100);
 	    ssnCol.setCellValueFactory(new PropertyValueFactory<Patient, String>("SSN"));
+	    ssnCol.setCellFactory(TextFieldTableCell.forTableColumn());
+	    ssnCol.setOnEditCommit(
+            new EventHandler<CellEditEvent<Patient, String>>() {
+                @Override
+                public void handle(CellEditEvent<Patient, String> t) {
+                    ((Patient) t.getTableView().getItems().get(
+                        t.getTablePosition().getRow())
+                        ).setSSN(t.getNewValue());
+                }
+            }
+        );
 		
 	    TableColumn genderCol = new TableColumn("Gender");
 	    genderCol.setMinWidth(100);
 	    genderCol.setCellValueFactory(new PropertyValueFactory<Patient, String>("Gender"));
+	    genderCol.setCellFactory(TextFieldTableCell.forTableColumn());
+	    genderCol.setOnEditCommit(
+            new EventHandler<CellEditEvent<Patient, String>>() {
+                @Override
+                public void handle(CellEditEvent<Patient, String> t) {
+                    ((Patient) t.getTableView().getItems().get(
+                        t.getTablePosition().getRow())
+                        ).setGender(t.getNewValue());
+                }
+            }
+        );
 		
 	    TableColumn protocolNumberCol = new TableColumn("Protocol Number");
 	    protocolNumberCol.setMinWidth(100);
 	    protocolNumberCol.setCellValueFactory(new PropertyValueFactory<Patient, String>("Procnum"));
+	    protocolNumberCol.setCellFactory(TextFieldTableCell.forTableColumn());
+	    protocolNumberCol.setOnEditCommit(
+            new EventHandler<CellEditEvent<Patient, String>>() {
+                @Override
+                public void handle(CellEditEvent<Patient, String> t) {
+                    ((Patient) t.getTableView().getItems().get(
+                        t.getTablePosition().getRow())
+                        ).setProcnum(t.getNewValue());
+                }
+            }
+        );
 		
 	    TableColumn protocolCol = new TableColumn("protocol");
 	    protocolCol.setMinWidth(100);
 	    protocolCol.setCellValueFactory(new PropertyValueFactory<Patient, String>("Protocol"));
+	    protocolCol.setCellFactory(TextFieldTableCell.forTableColumn());
+	    protocolCol.setOnEditCommit(
+            new EventHandler<CellEditEvent<Patient, String>>() {
+                @Override
+                public void handle(CellEditEvent<Patient, String> t) {
+                    ((Patient) t.getTableView().getItems().get(
+                        t.getTablePosition().getRow())
+                        ).setProtocol(t.getNewValue());
+                }
+            }
+        );
 		
 	    table.getColumns().addAll(nameCol, lastCol, ssnCol, genderCol, protocolCol, protocolNumberCol);
 	    VBox boxTable = new VBox();
@@ -892,11 +966,26 @@ public class Main extends Application {
 			textField2.clear();
 			textField3.clear();
 			textField4.clear();
+			textField5.clear();
 		} );
 		
 		Button clear = new Button( "Clear" );
+		clear.setOnAction( (e) -> {
+			textField.clear();
+			textField1.clear();
+			textField2.clear();
+			textField3.clear();
+			textField4.clear();
+			textField5.clear();
+		} );
 		
-		box1.getChildren().addAll(textField, textField5 ,textField1 ,textField2 ,textField3 ,textField4, sub, clear);
+		Button back = new Button( "Back to Main Menu" );
+		back.setOnAction( (e) -> {
+			stage2.close();
+			mainPage();
+		} );
+		
+		box1.getChildren().addAll(textField, textField5 ,textField1 ,textField2 ,textField3 ,textField4, sub, clear, back);
 		box1.setSpacing(3);
 		
 		box3.getChildren().addAll(label, table, box1);
