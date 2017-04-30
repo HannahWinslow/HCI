@@ -858,7 +858,7 @@ public class Main extends Application {
 	    }
 	 */
 
-	 private final ObservableList<Patient> data =
+private final ObservableList<Patient> data =
 		        FXCollections.observableArrayList(
 		            new Patient("Jacob", "Smith", "Hoo", "M", "surgery", "Ha"),
 		            new Patient("Isabella", "Johnson", "123456", "M", "surgery", "123"),
@@ -904,27 +904,27 @@ public class Main extends Application {
 		
 		TableColumn nameCol = new TableColumn("First Name");
 		nameCol.setMinWidth(200);
-		nameCol.setCellValueFactory(new PropertyValueFactory<Patient, String>("firstName"));
+		nameCol.setCellValueFactory(new PropertyValueFactory<Patient, String>("FirstName"));
 		
 		TableColumn lNameCol = new TableColumn("Last Name");
 		lNameCol.setMinWidth(200);
-		lNameCol.setCellValueFactory(new PropertyValueFactory<Patient, String>("lastName"));
+		lNameCol.setCellValueFactory(new PropertyValueFactory<Patient, String>("LastName"));
 		
 	    TableColumn ssnCol = new TableColumn("Social security number");
 	    ssnCol.setMinWidth(200);
-	    ssnCol.setCellValueFactory(new PropertyValueFactory<Patient, String>("social"));
+	    ssnCol.setCellValueFactory(new PropertyValueFactory<Patient, String>("SSN"));
 		
 	    TableColumn genderCol = new TableColumn("Gender");
 	    genderCol.setMinWidth(200);
-	    genderCol.setCellValueFactory(new PropertyValueFactory<Patient, String>("gender"));
+	    genderCol.setCellValueFactory(new PropertyValueFactory<Patient, String>("Gender"));
 		
 	    TableColumn protocolCol = new TableColumn("Protocol");
 	    protocolCol.setMinWidth(200);
-	    protocolCol.setCellValueFactory(new PropertyValueFactory<Patient, String>("protocol"));
+	    protocolCol.setCellValueFactory(new PropertyValueFactory<Patient, String>("Protocol"));
 	    
 	    TableColumn protocolNumberCol = new TableColumn("Protocol Number");
 	    protocolNumberCol.setMinWidth(200);
-	    protocolNumberCol.setCellValueFactory(new PropertyValueFactory<Patient, String>("proNum"));
+	    protocolNumberCol.setCellValueFactory(new PropertyValueFactory<Patient, String>("Procnum"));
 		
 	    table.getColumns().addAll(nameCol, lNameCol, ssnCol, genderCol, protocolCol, protocolNumberCol);
 	    VBox boxTable = new VBox();
@@ -965,68 +965,68 @@ public class Main extends Application {
 
 	//Patient class
 	public class Patient {
-		private SimpleStringProperty firstName;
-		private SimpleStringProperty lastName;
-		private SimpleStringProperty social;
-		private SimpleStringProperty gender;
-		private SimpleStringProperty protocol;
-		private SimpleStringProperty proNum;
+		private String firstName;
+		private String lastName;
+		private String social;
+		private String gender;
+		private String protocol;
+		private String proNum;
 
 		private Patient(String fName, String lName, String social, String gender, String protocol, String proNum) {
-			this.firstName = new SimpleStringProperty(fName);
-			this.lastName = new SimpleStringProperty(lName);
-			this.social = new SimpleStringProperty(social);
-			this.gender = new SimpleStringProperty(gender);
-			this.protocol = new SimpleStringProperty(protocol);
-			this.proNum = new SimpleStringProperty(proNum);
+			this.firstName = fName;
+			this.lastName = lName;
+			this.social = social;
+			this.gender = gender;
+			this.protocol = protocol;
+			this.proNum = proNum;
 		}
 
 		public String getFirstName() {
-			return firstName.get();
+			return firstName;
 		}
 
 		public void setFirstName(String fNameNew) {
-			firstName.set(fNameNew);
+			firstName = fNameNew;
 		}
 
 		public String getLastName() {
-			return lastName.get();
+			return lastName;
 		}
 
 		public void setLastName(String lNameNew) {
-			lastName.set(lNameNew);
+			lastName = lNameNew;
 		}
 
 		public String getSSN() {
-			return social.get();
+			return social;
 		}
 
 		public void setSSN(String socialNew) {
-			social.set(socialNew);
+			social = socialNew;
 		}
 
 		public String getGender() {
-			return gender.get();
+			return gender;
 		}
 
 		public void setGender(String genderNew) {
-			gender.set(genderNew);
+			gender = genderNew;
 		}
 
 		public String getProtocol() {
-			return protocol.get();
+			return protocol;
 		}
 
 		public void setProtocol(String protocolNew) {
-			protocol.set(protocolNew);
+			protocol = protocolNew;
 		}
 
 		public String getProcnum() {
-			return proNum.get();
+			return proNum;
 		}
 
 		public void setProcnum(String proNumNew) {
-			proNum.set(proNumNew);
+			proNum = proNumNew;
 		}
 	}
 
