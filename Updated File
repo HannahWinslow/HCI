@@ -1,5 +1,12 @@
 package application;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import javafx.application.Application;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -46,6 +53,12 @@ public class Main extends Application {
 			//Set up pages
 			loginPage();
 			mainPage();
+			
+			//IGNORE THIS, I WILL REMOVE IT LATER, IT'S MY TESTING CLASS FOR THE DB - Josiah
+			//System.out.println("Testing DB connection");
+			//DBConn testDB = new DBConn();
+			//testDB.accessDB();
+			//System.out.println("DB connection passed");
 
 
 
@@ -809,27 +822,27 @@ public class Main extends Application {
 	        }
 	    }
 	 */
-	
-	private final ObservableList<Patient> dataPatient =
+
+	 private final ObservableList<Patient> data =
 		        FXCollections.observableArrayList(
-		            new Patient("Jacob", "Smith", "123", "M", "surgery", "123"),
-		            new Patient("Isabella", "Johnson", "123", "M", "surgery", "123"),
-		            new Patient("Ethan", "Williams", "123", "M", "surgery", "123"),
-		            new Patient("Emma", "Jones", "123", "M", "surgery", "123"),
-		            new Patient("Michael", "Brown", "123", "M", "surgery", "123")
+		            new Patient("Jacob", "Smith", "Hoo", "M", "surgery", "Ha"),
+		            new Patient("Isabella", "Johnson", "123456", "M", "surgery", "123"),
+		            new Patient("Ethan", "Williams", "123456", "M", "surgery", "123"),
+		            new Patient("Emma", "Jones", "123456", "M", "surgery", "123"),
+		            new Patient("Michael", "Brown", "123456", "M", "surgery", "123")
 		        );
 	
-	Scene sceneData;
 	
-			public void patientPage() {
-			
-		Stage stage2 = new Stage();
-		stage2.setTitle("Patient");
+	Scene sceneData;
+
+	public void patientPage() {
+		Stage newStage = new Stage();
+		newStage.setTitle("Patient");
         BorderPane root = new BorderPane();
-		sceneData = new Scene(root,400,400);
+		sceneData = new Scene(root,1400,400);
 		final Label label = new Label("Patient");
 		label.setFont(new Font("Arial", 20));
-		stage2.setScene(sceneData);
+		
 		//A series of box to create the form
 		HBox box = new HBox();
 		VBox box3 = new VBox();
@@ -854,113 +867,85 @@ public class Main extends Application {
 		TableView table = new TableView();
 		table.setEditable(true);
 		
-		Callback<TableColumn, TableCell> cellFactory =
-                new Callback<TableColumn, TableCell>() {
-                    public TableCell call(TableColumn p) {
-                       return new EditingCell();
-                    }
-                };
-                
 		TableColumn nameCol = new TableColumn("First Name");
-		nameCol.setMinWidth(100);
+		nameCol.setMinWidth(200);
 		nameCol.setCellValueFactory(new PropertyValueFactory<Patient, String>("FirstName"));
-		nameCol.setCellFactory(TextFieldTableCell.forTableColumn());
-		nameCol.setOnEditCommit(
-            new EventHandler<CellEditEvent<Patient, String>>() {
-                @Override
-                public void handle(CellEditEvent<Patient, String> t) {
-                    ((Patient) t.getTableView().getItems().get(
-                        t.getTablePosition().getRow())
-                        ).setFirstName(t.getNewValue());
-                }
-            }
-        );
 		
-		TableColumn lastCol = new TableColumn("Last Name");
-		lastCol.setMinWidth(100);
-		lastCol.setCellValueFactory(new PropertyValueFactory<Patient, String>("LastName"));
-		lastCol.setCellFactory(TextFieldTableCell.forTableColumn());
-		lastCol.setOnEditCommit(
-            new EventHandler<CellEditEvent<Patient, String>>() {
-                @Override
-                public void handle(CellEditEvent<Patient, String> t) {
-                    ((Patient) t.getTableView().getItems().get(
-                        t.getTablePosition().getRow())
-                        ).setLastName(t.getNewValue());
-                }
-            }
-        );
+		TableColumn lNameCol = new TableColumn("Last Name");
+		lNameCol.setMinWidth(200);
+		lNameCol.setCellValueFactory(new PropertyValueFactory<Patient, String>("LastName"));
 		
-	    TableColumn ssnCol = new TableColumn("Social security number");
-	    ssnCol.setMinWidth(100);
-	    ssnCol.setCellValueFactory(new PropertyValueFactory<Patient, String>("SSN"));
-	    ssnCol.setCellFactory(TextFieldTableCell.forTableColumn());
-	    ssnCol.setOnEditCommit(
-            new EventHandler<CellEditEvent<Patient, String>>() {
-                @Override
-                public void handle(CellEditEvent<Patient, String> t) {
-                    ((Patient) t.getTableView().getItems().get(
-                        t.getTablePosition().getRow())
-                        ).setSSN(t.getNewValue());
-                }
-            }
-        );
+	    TableColumn ssnCol = new TableColumn("Sponsor");
+	    ssnCol.setMinWidth(200);
+	    ssnCol.setCellValueFactory(new PropertyValueFactory<Patient, String>("Sponsor"));
 		
-	    TableColumn genderCol = new TableColumn("Gender");
-	    genderCol.setMinWidth(100);
-	    genderCol.setCellValueFactory(new PropertyValueFactory<Patient, String>("Gender"));
-	    genderCol.setCellFactory(TextFieldTableCell.forTableColumn());
-	    genderCol.setOnEditCommit(
-            new EventHandler<CellEditEvent<Patient, String>>() {
-                @Override
-                public void handle(CellEditEvent<Patient, String> t) {
-                    ((Patient) t.getTableView().getItems().get(
-                        t.getTablePosition().getRow())
-                        ).setGender(t.getNewValue());
-                }
-            }
-        );
+	    TableColumn genderCol = new TableColumn("Protocol");
+	    genderCol.setMinWidth(200);
+	    genderCol.setCellValueFactory(new PropertyValueFactory<Patient, String>("Protocol"));
 		
-	    TableColumn protocolNumberCol = new TableColumn("Protocol Number");
-	    protocolNumberCol.setMinWidth(100);
-	    protocolNumberCol.setCellValueFactory(new PropertyValueFactory<Patient, String>("Procnum"));
-	    protocolNumberCol.setCellFactory(TextFieldTableCell.forTableColumn());
-	    protocolNumberCol.setOnEditCommit(
-            new EventHandler<CellEditEvent<Patient, String>>() {
-                @Override
-                public void handle(CellEditEvent<Patient, String> t) {
-                    ((Patient) t.getTableView().getItems().get(
-                        t.getTablePosition().getRow())
-                        ).setProcnum(t.getNewValue());
-                }
-            }
-        );
+	    TableColumn protocolCol = new TableColumn("Case Number");
+	    protocolCol.setMinWidth(200);
+	    protocolCol.setCellValueFactory(new PropertyValueFactory<Patient, String>("CaseNumber"));
+	    
+	    TableColumn protocolNumberCol = new TableColumn("Notes");
+	    protocolNumberCol.setMinWidth(400);
+	    protocolNumberCol.setCellValueFactory(new PropertyValueFactory<Patient, String>("Notes"));
 		
-	    TableColumn protocolCol = new TableColumn("protocol");
-	    protocolCol.setMinWidth(100);
-	    protocolCol.setCellValueFactory(new PropertyValueFactory<Patient, String>("Protocol"));
-	    protocolCol.setCellFactory(TextFieldTableCell.forTableColumn());
-	    protocolCol.setOnEditCommit(
-            new EventHandler<CellEditEvent<Patient, String>>() {
-                @Override
-                public void handle(CellEditEvent<Patient, String> t) {
-                    ((Patient) t.getTableView().getItems().get(
-                        t.getTablePosition().getRow())
-                        ).setProtocol(t.getNewValue());
-                }
-            }
-        );
-		
-	    table.getColumns().addAll(nameCol, lastCol, ssnCol, genderCol, protocolCol, protocolNumberCol);
+	    table.getColumns().addAll(nameCol, lNameCol, ssnCol, genderCol, protocolCol, protocolNumberCol);
 	    VBox boxTable = new VBox();
-	    table.setItems(dataPatient);
-	    boxTable.setSpacing(5);
-	    boxTable.setPadding(new Insets(10, 0, 0, 10));
+	    
+	    //HERE IS WHERE THE DATA IS SET
+	    
+	    // **************************************************
+	    String ptFName = "";
+	    String ptLName = "";
+	    String ptSponsor = "";
+	    String ptNumber = "";
+	    String ptCaseNo = "";
+	    String ptNotes = "";
+	    ObservableList<Patient> ptList = FXCollections.observableArrayList();
+	    
+	    
+	    Connection conn;
+		try {
+			conn=DriverManager.getConnection("jdbc:ucanaccess://C:/dbTest/teamDB.accdb");
+			
+			Statement st = conn.createStatement();
+			String newQuery = "SELECT TblPatients.ptFName, TblPatients.ptLName, tblProtocol.protSponsor, tblProtocol.protNumber, TblPatients.ptCaseNo, TblPatients.ptNotes FROM tblProtocol INNER JOIN TblPatients ON tblProtocol.protProtocol = TblPatients.protProtocol;";
+			ResultSet results = st.executeQuery(newQuery);
+			ResultSetMetaData resultsInfo = results.getMetaData();
+			int numCols = resultsInfo.getColumnCount();
+			while (results.next()) {
+			
+				ptFName = results.getString(1);
+				ptLName = results.getString(2);
+				ptSponsor = results.getString(3);
+				ptNumber = results.getString(4);
+				ptCaseNo = results.getString(5);
+				ptNotes = results.getString(6);
+				Patient tempPatient = new Patient(ptFName, ptLName, ptSponsor, ptNumber, ptCaseNo, ptNotes);
+				ptList.add(tempPatient);
+			
+			}
+			
+			conn.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    
+	    
+	    // **************************************************
+	    table.setItems(ptList);
+	    //boxTable.setSpacing(5);
+	    //boxTable.setPadding(new Insets(10, 0, 0, 10));
 	    boxTable.getChildren().addAll(label, table);
+	    
+	    
 		
 		Button sub = new Button( "Submit" );
 		sub.setOnAction( (e) -> {
-			dataPatient.add(new Patient(textField.getText(), textField5.getText(), textField1.getText(), textField2.getText(), textField3.getText(), textField4.getText()));
+			data.add(new Patient(textField.getText(), textField5.getText(), textField1.getText(), textField2.getText(), textField3.getText(), textField4.getText()));
 			textField.clear();
 			textField1.clear();
 			textField2.clear();
@@ -970,7 +955,7 @@ public class Main extends Application {
 		} );
 		
 		Button clear = new Button( "Clear" );
-		clear.setOnAction( (e) -> {
+		sub.setOnAction( (e) -> {
 			textField.clear();
 			textField1.clear();
 			textField2.clear();
@@ -979,87 +964,82 @@ public class Main extends Application {
 			textField5.clear();
 		} );
 		
-		Button back = new Button( "Back to Main Menu" );
-		back.setOnAction( (e) -> {
-			stage2.close();
-			mainPage();
-		} );
-		
-		box1.getChildren().addAll(textField, textField5 ,textField1 ,textField2 ,textField3 ,textField4, sub, clear, back);
+		box1.getChildren().addAll(textField, textField5 ,textField1 ,textField2 ,textField3 ,textField4, sub, clear);
 		box1.setSpacing(3);
 		
 		box3.getChildren().addAll(label, table, box1);
 		root.setCenter(box3);
-		stage2.show();
+		newStage.setScene(sceneData);
+		newStage.show();
 	}
-	
-	
+
 	//Patient class
 	public class Patient {
-		 private String firstName;
-	     private String lastName;
-	     private String ssN;
-	     private String gender;
-	     private String protocol;
-	     private String proNum;
-	     
-	     private Patient(String fName, String lName, String ssN, String gender, String protocol, String proNum) {
-	         this.firstName = fName;
-	         this.lastName = lName;
-	         this.ssN = ssN;
-	         this.gender = gender;
-	         this.protocol =protocol;
-	         this.proNum = proNum;
-	     }
+		private String firstName;
+		private String lastName;
+		private String sponsor;
+		private String caseNumber;
+		private String protocol;
+		private String notes;
 
-	     public String getFirstName() {
-	         return firstName;
-	     }
+		private Patient(String fName, String lName, String sponsor, String caseNumber, String protocol, String notes) {
+			this.firstName = fName;
+			this.lastName = lName;
+			this.sponsor = sponsor;
+			this.caseNumber = caseNumber;
+			this.protocol = protocol;
+			this.notes = notes;
+		}
 
-	     public void setFirstName(String fName) {
-	         firstName = fName;
-	     }
+		public String getFirstName() {
+			return firstName;
+		}
 
-	     public String getLastName() {
-	         return lastName;
-	     }
+		public void setFirstName(String fNameNew) {
+			firstName = fNameNew;
+		}
 
-	     public void setLastName(String lName) {
-	         lastName = lName;
-	     }
-	     
-	     public String getSSN() {
-	         return ssN;
-	     }
+		public String getLastName() {
+			return lastName;
+		}
 
-	     public void setSSN(String ssN) {
-	    	 ssN = ssN;
-	     }
-	     
-	     public String getGender() {
-	         return gender;
-	     }
+		public void setLastName(String lNameNew) {
+			lastName = lNameNew;
+		}
 
-	     public void setGender(String gender) {
-	    	 gender = gender;
-	     }
-	     
-	     public String getProtocol() {
-	         return protocol;
-	     }
+		public String getSponsor() {
+			return sponsor;
+		}
 
-	     public void setProtocol(String protocol) {
-	    	 protocol = protocol;
-	     }
-	     
-	     public String getProcnum() {
-	         return proNum;
-	     }
+		public void setSponsor(String sponsorNew) {
+			sponsor = sponsorNew;
+		}
 
-	     public void setProcnum(String proNum) {
-	    	 proNum = proNum;
-	     }
+		public String getCaseNumber() {
+			return caseNumber;
+		}
+
+		public void setCaseNumber(String newCaseNumber) {
+			caseNumber = newCaseNumber;
+		}
+
+		public String getProtocol() {
+			return protocol;
+		}
+
+		public void setProtocol(String protocolNew) {
+			protocol = protocolNew;
+		}
+
+		public String getNotes() {
+			return notes;
+		}
+
+		public void setNotes(String newNotes) {
+			notes = newNotes;
+		}
 	}
+
 	public static void main(String[] args) {
 		launch(args);
 	}
