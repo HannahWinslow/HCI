@@ -7,6 +7,8 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import javax.swing.JOptionPane;
+
 import javafx.application.Application;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -117,6 +119,9 @@ public class Main extends Application {
 			//Eventually, this will need to switch to a different
 			//scene based upon the level of the user, but for now,
 			//we will just switch to a scene that has all access
+			
+			//THIS WILL RUN A QUERY TO SEE IF USER IS IN DATABASE, IF SO, WILL LOG THEM IN
+			//make sure to keep track of their user permissions and only make buttons enabled if they have appropriate permissions
 			myStage.setScene(mainScene);
 
 		});
@@ -825,15 +830,13 @@ public class Main extends Application {
 
 	 private final ObservableList<Patient> data =
 		        FXCollections.observableArrayList(
-		            new Patient("Jacob", "Smith", "Hoo", "M", "surgery", "Ha"),
-		            new Patient("Isabella", "Johnson", "123456", "M", "surgery", "123"),
-		            new Patient("Ethan", "Williams", "123456", "M", "surgery", "123"),
-		            new Patient("Emma", "Jones", "123456", "M", "surgery", "123"),
-		            new Patient("Michael", "Brown", "123456", "M", "surgery", "123")
+		            new Patient("Jacob", "Smith", "Hoo", "M", "surgery", "Ha")
 		        );
 	
 	
 	Scene sceneData;
+	
+	
 
 	public void patientPage() {
 		Stage newStage = new Stage();
@@ -854,13 +857,13 @@ public class Main extends Application {
 		TextField textField5 = new TextField();
 		textField5.setPromptText("Last Name");
 		TextField textField1 = new TextField ();
-		textField1.setPromptText("Social security number");
+		textField1.setPromptText("Sponsor");
 		TextField textField2 = new TextField ();
-		textField2.setPromptText("Gender");
+		textField2.setPromptText("Protocol");
 		TextField textField3 = new TextField ();
-		textField3.setPromptText("Protocol");
+		textField3.setPromptText("Case #");
 		TextField textField4 = new TextField ();
-		textField4.setPromptText("Protocol number");
+		textField4.setPromptText("Notes");
 		
 		
 		//create a table to see data
@@ -897,44 +900,44 @@ public class Main extends Application {
 	    //HERE IS WHERE THE DATA IS SET
 	    
 	    // **************************************************
-	    String ptFName = "";
-	    String ptLName = "";
-	    String ptSponsor = "";
-	    String ptNumber = "";
-	    String ptCaseNo = "";
-	    String ptNotes = "";
-	    ObservableList<Patient> ptList = FXCollections.observableArrayList();
+//	    String ptFName = "";
+//	    String ptLName = "";
+//	    String ptSponsor = "";
+//	    String ptNumber = "";
+//	    String ptCaseNo = "";
+//	    String ptNotes = "";
+//	    ObservableList<Patient> ptList = FXCollections.observableArrayList();
+//	    
+//	    
+//	    Connection conn;
+//		try {
+//			conn=DriverManager.getConnection("jdbc:ucanaccess://C:/dbTest/teamDB.accdb");
+//			
+//			Statement st = conn.createStatement();
+//			String newQuery = "SELECT TblPatients.ptFName, TblPatients.ptLName, tblProtocol.protSponsor, tblProtocol.protNumber, TblPatients.ptCaseNo, TblPatients.ptNotes FROM tblProtocol INNER JOIN TblPatients ON tblProtocol.protProtocol = TblPatients.protProtocol;";
+//			ResultSet results = st.executeQuery(newQuery);
+//			ResultSetMetaData resultsInfo = results.getMetaData();
+//			int numCols = resultsInfo.getColumnCount();
+//			while (results.next()) {
+//			
+//				ptFName = results.getString(1);
+//				ptLName = results.getString(2);
+//				ptSponsor = results.getString(3);
+//				ptNumber = results.getString(4);
+//				ptCaseNo = results.getString(5);
+//				ptNotes = results.getString(6);
+//				Patient tempPatient = new Patient(ptFName, ptLName, ptSponsor, ptNumber, ptCaseNo, ptNotes);
+//				ptList.add(tempPatient);
+//			
+//			}
+//			
+//			conn.close();
+//		} catch (SQLException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	    
-	    
-	    Connection conn;
-		try {
-			conn=DriverManager.getConnection("jdbc:ucanaccess://C:/dbTest/teamDB.accdb");
-			
-			Statement st = conn.createStatement();
-			String newQuery = "SELECT TblPatients.ptFName, TblPatients.ptLName, tblProtocol.protSponsor, tblProtocol.protNumber, TblPatients.ptCaseNo, TblPatients.ptNotes FROM tblProtocol INNER JOIN TblPatients ON tblProtocol.protProtocol = TblPatients.protProtocol;";
-			ResultSet results = st.executeQuery(newQuery);
-			ResultSetMetaData resultsInfo = results.getMetaData();
-			int numCols = resultsInfo.getColumnCount();
-			while (results.next()) {
-			
-				ptFName = results.getString(1);
-				ptLName = results.getString(2);
-				ptSponsor = results.getString(3);
-				ptNumber = results.getString(4);
-				ptCaseNo = results.getString(5);
-				ptNotes = results.getString(6);
-				Patient tempPatient = new Patient(ptFName, ptLName, ptSponsor, ptNumber, ptCaseNo, ptNotes);
-				ptList.add(tempPatient);
-			
-			}
-			
-			conn.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	    
-	    
+	    ObservableList<Patient> ptList = getPtList();
 	    // **************************************************
 	    table.setItems(ptList);
 	    //boxTable.setSpacing(5);
@@ -945,17 +948,35 @@ public class Main extends Application {
 		
 		Button sub = new Button( "Submit" );
 		sub.setOnAction( (e) -> {
-			data.add(new Patient(textField.getText(), textField5.getText(), textField1.getText(), textField2.getText(), textField3.getText(), textField4.getText()));
+			
+			//data.add(new Patient(textField.getText(), textField5.getText(), textField1.getText(), textField2.getText(), textField3.getText(), textField4.getText()));
+			String ptFName = textField.getText();
+		    String ptLName = textField5.getText();
+		    String ptSponsor = textField1.getText();
+		    String ptNumber = textField2.getText();
+		    String ptCaseNo = textField3.getText();
+		    String ptNotes = textField4.getText();
+		    //System.out.println("Adding new patient");
+		    addNewPt(ptFName, ptLName, ptSponsor, ptNumber, ptCaseNo, ptNotes);
+		    //System.out.println("New patient added");
+		    
+		    data.clear();
+		    data.addAll(getPtList());
+		    table.setItems(data);
+			
+			//addNewPt();
 			textField.clear();
 			textField1.clear();
 			textField2.clear();
 			textField3.clear();
 			textField4.clear();
 			textField5.clear();
+			newStage.toFront();
 		} );
 		
 		Button clear = new Button( "Clear" );
-		sub.setOnAction( (e) -> {
+		clear.setOnAction( (e) -> {
+			//System.out.println("Clear pressed!");
 			textField.clear();
 			textField1.clear();
 			textField2.clear();
@@ -972,6 +993,90 @@ public class Main extends Application {
 		newStage.setScene(sceneData);
 		newStage.show();
 	}
+	
+	public void addNewPt(String fName, String lName, String sponsor, String protocol, String caseNumber, String ptNotes) {
+		String protKey = "";
+		int protKeyInt = 1;
+		String updateQry = "";
+		String protKeyQuery = "SELECT protProtocol FROM tblProtocol WHERE protSponsor=\"";
+		protKeyQuery += sponsor + "\" AND protNumber=\"" + protocol + "\";";
+		
+		//System.out.println(protKeyQuery);
+		
+		//create DB connection
+		Connection conn;
+		try {
+			conn=DriverManager.getConnection("jdbc:ucanaccess://C:/dbTest/teamDB.accdb");
+			
+			Statement st = conn.createStatement();
+			
+			ResultSet results = st.executeQuery(protKeyQuery);
+			ResultSetMetaData resultsInfo = results.getMetaData();
+			int numCols = resultsInfo.getColumnCount();
+			while (results.next()) {
+				protKey = results.getString(1);
+			}
+			//protKeyInt = Integer.parseInt(protKey);
+			//System.out.println("Using prot key of: " + protKey);
+			
+			updateQry = "INSERT INTO tblPatients (ptLName, ptFName, protProtocol, ptCaseNo, ptNotes) VALUES (\"" + lName + "\",\"" + fName + "\"," + protKey + ",\"" + caseNumber + "\",\"" + ptNotes  + "\");";
+			//System.out.println(updateQry);
+			st.executeUpdate(updateQry);
+			//st.executeQuery(updateQry);
+			
+			conn.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "The values you have entered are invalid! Likely there is no such protocol!", "InfoBox: " + "Bad Data", JOptionPane.INFORMATION_MESSAGE);
+			
+		}
+		
+		
+	}
+	
+	public ObservableList<Patient> getPtList() {
+		 String ptFName = "";
+		    String ptLName = "";
+		    String ptSponsor = "";
+		    String ptNumber = "";
+		    String ptCaseNo = "";
+		    String ptNotes = "";
+		    ObservableList<Patient> ptList = FXCollections.observableArrayList();
+		    
+		    
+		    Connection conn;
+			try {
+				conn=DriverManager.getConnection("jdbc:ucanaccess://C:/dbTest/teamDB.accdb");
+				
+				Statement st = conn.createStatement();
+				String newQuery = "SELECT TblPatients.ptFName, TblPatients.ptLName, tblProtocol.protSponsor, tblProtocol.protNumber, TblPatients.ptCaseNo, TblPatients.ptNotes FROM tblProtocol INNER JOIN TblPatients ON tblProtocol.protProtocol = TblPatients.protProtocol;";
+				ResultSet results = st.executeQuery(newQuery);
+				ResultSetMetaData resultsInfo = results.getMetaData();
+				int numCols = resultsInfo.getColumnCount();
+				while (results.next()) {
+				
+					ptFName = results.getString(1);
+					ptLName = results.getString(2);
+					ptSponsor = results.getString(3);
+					ptNumber = results.getString(4);
+					ptCaseNo = results.getString(5);
+					ptNotes = results.getString(6);
+					Patient tempPatient = new Patient(ptFName, ptLName, ptSponsor, ptNumber, ptCaseNo, ptNotes);
+					ptList.add(tempPatient);
+				
+				}
+				
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				//e.printStackTrace();
+				JOptionPane.showMessageDialog(null, "An unknown error occurred!", "InfoBox: " + "Bad Data", JOptionPane.INFORMATION_MESSAGE);
+			}
+			
+			return ptList;
+	}
+	
 
 	//Patient class
 	public class Patient {
@@ -982,7 +1087,7 @@ public class Main extends Application {
 		private String protocol;
 		private String notes;
 
-		private Patient(String fName, String lName, String sponsor, String caseNumber, String protocol, String notes) {
+		private Patient(String fName, String lName, String sponsor, String protocol, String caseNumber, String notes) {
 			this.firstName = fName;
 			this.lastName = lName;
 			this.sponsor = sponsor;
