@@ -263,6 +263,60 @@ public class Main extends Application {
 
 
 	}
+	
+	public ObservableList<Person> getUserList() {
+		ObservableList<Person> returnList = FXCollections.observableArrayList();
+		
+		Connection conn;
+		try {
+			conn=DriverManager.getConnection("jdbc:ucanaccess://C:/dbTest/teamDB.accdb");
+			
+			Statement st = conn.createStatement();
+			String newQuery = "SELECT * FROm tblUsr;";
+			ResultSet results = st.executeQuery(newQuery);
+			ResultSetMetaData resultsInfo = results.getMetaData();
+			int numCols = resultsInfo.getColumnCount();
+			while (results.next()) {
+				Person tempPerson = new Person(results.getString(2), results.getString(3), results.getString(4), results.getString(7));
+				//first name, last name, contact, username
+				
+				returnList.add(tempPerson);
+
+			
+			}
+			
+			conn.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "An unknown error occurred!", "InfoBox: " + "Bad Data", JOptionPane.INFORMATION_MESSAGE);
+		}
+		
+		
+		return returnList;
+	}
+	
+	public void addNewUser(String userFName, String userLName, String username, String contactInfo) {
+		String updateQry = "INSERT INTO tblUsr (usrLogin, usrFName, usrLName, usrContact) VALUES(\"" + username + "\", \"" + userFName + "\", \"" + userLName + "\", \"" + contactInfo + "\");";
+		
+		//create DB connection
+				Connection conn;
+				try {
+					conn=DriverManager.getConnection("jdbc:ucanaccess://C:/dbTest/teamDB.accdb");
+					
+					Statement st = conn.createStatement();
+					st.executeUpdate(updateQry);
+					//st.executeQuery(updateQry);
+					
+					conn.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					//e.printStackTrace();
+					JOptionPane.showMessageDialog(null, "An error occurred with your entry! Perhaps a duplicate?", "InfoBox: " + "Bad Data", JOptionPane.INFORMATION_MESSAGE);
+					
+				}
+		
+	}
 
 	/*
 	 * Author: Betsie Koshy 
@@ -372,6 +426,8 @@ public class Main extends Application {
 				}
 				);
 
+		data.clear();
+		data.addAll(getUserList());
 		table.setItems(data);
 		table.getColumns().addAll(firstNameCol, lastNameCol, emailCol, userNameCol);
 
@@ -392,11 +448,10 @@ public class Main extends Application {
 		addButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
-				data.add(new Person(
-						addFirstName.getText(),
-						addLastName.getText(),
-						addEmail.getText(),
-						addUserName.getText()));
+				
+				addNewUser(addFirstName.getText(), addLastName.getText(), addUserName.getText(), addEmail.getText());
+				data.clear();
+				data.addAll(getUserList());
 				addFirstName.clear();
 				addLastName.clear();
 				addEmail.clear();
