@@ -629,6 +629,87 @@ public class Main extends Application {
 		stage2.show();
 
 	}
+	
+	public ObservableList<Tasks> getTaskList() {
+		ObservableList<Tasks> returnList = FXCollections.observableArrayList();
+		
+		Connection conn;
+		try {
+			conn=DriverManager.getConnection("jdbc:ucanaccess://C:/dbTest/teamDB.accdb");
+			
+			Statement st = conn.createStatement();
+			String newQuery = "SELECT TblPatients.ptFName, TblPatients.ptLName, tblTask.taskName, tblTaskAssign.assignDate FROM TblPatients INNER JOIN (tblTask INNER JOIN tblTaskAssign ON tblTask.taskID = tblTaskAssign.taskID) ON TblPatients.ptID = tblTaskAssign.ptID;";
+			ResultSet results = st.executeQuery(newQuery);
+			ResultSetMetaData resultsInfo = results.getMetaData();
+			int numCols = resultsInfo.getColumnCount();
+			while (results.next()) {
+				Tasks tempTask = new Tasks(results.getString(1), results.getString(2), results.getString(3), results.getString(4));
+				//first name, last name, task name, due date
+				
+				returnList.add(tempTask);
+
+			
+			}
+			
+			conn.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "An unknown error occurred!", "InfoBox: " + "Bad Data", JOptionPane.INFORMATION_MESSAGE);
+		}
+		
+		
+		return returnList;
+	}
+	
+	public void addNewTask(String lName, String fName, String taskName, String dueDate) {
+		String ptId = "";
+		String taskID = "";
+		String findPtQuery = "";
+		String findTaskQuery = "";
+		String updateQuery = "";
+		
+		//select to find patient ID
+		//select to find task ID
+		//update taskAssign with that patient and task ID and add due date
+		
+		//create DB connection
+				Connection conn;
+				try {
+					conn=DriverManager.getConnection("jdbc:ucanaccess://C:/dbTest/teamDB.accdb");
+					findPtQuery = "Select ptID FROM tblPatients WHERE ptLName=\"" + lName + "\" AND ptFName=\"" + fName + "\";";
+					findTaskQuery = "Select taskID FROM tblTask WHERE taskName=\"" + taskName + "\";";
+					
+					Statement st = conn.createStatement();
+					
+					ResultSet results = st.executeQuery(findPtQuery);
+					ResultSetMetaData resultsInfo = results.getMetaData();
+					int numCols = resultsInfo.getColumnCount();
+					while (results.next()) {
+						ptId = results.getString(1);
+					}
+					
+					ResultSet results2 = st.executeQuery(findTaskQuery);
+					ResultSetMetaData resultsInfo2 = results2.getMetaData();
+					int numCols2 = resultsInfo2.getColumnCount();
+					while (results2.next()) {
+						taskID = results2.getString(1);
+					}
+					//updateQry = "INSERT INTO tblPatients (ptLName, ptFName, protProtocol, ptCaseNo, ptNotes) VALUES (\"" + lName + "\",\"" + fName + "\"," + protKey + ",\"" + caseNumber + "\",\"" + ptNotes  + "\");";
+					updateQuery = "INSERT INTO tblTaskAssign (taskID, ptID, assignDate) VALUES (\"" + taskID + "\",\"" + ptId + "\",\"" + dueDate + "\");";
+					//System.out.println(updateQry);
+					st.executeUpdate(updateQuery);
+					//st.executeQuery(updateQry);
+					
+					conn.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					//e.printStackTrace();
+					JOptionPane.showMessageDialog(null, "The values you have entered are invalid! Likely there is no such task or patient!", "InfoBox: " + "Bad Data", JOptionPane.INFORMATION_MESSAGE);
+					
+				}
+		
+	}
 
 
 
@@ -722,6 +803,8 @@ public class Main extends Application {
             }
         );
  
+        data.clear();
+        data.addAll(getTaskList());
         table.setItems(data);
         table.getColumns().addAll(firstPatientCol, lastPatientCol,taskNameCol, dateCol);
  
@@ -742,11 +825,9 @@ public class Main extends Application {
         addButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
-                data.add(new Tasks(
-                        addPatientFName.getText(),
-                        addPatientLName.getText(),
-                        addTaskName.getText(),
-                        addDate.getText()));
+            	addNewTask(addPatientLName.getText(), addPatientFName.getText(), addTaskName.getText(), addDate.getText());
+                data.clear();
+                data.addAll(getTaskList());
                 addPatientFName.clear();
                 addPatientLName.clear();
                 addTaskName.clear();
