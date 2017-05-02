@@ -52,7 +52,7 @@ public class Main extends Application {
 	public void start(Stage primaryStage) {
 		try {
 
-			//Set up pages
+			//Set up pages 
 			loginPage();
 			mainPage();
 			
@@ -136,18 +136,24 @@ public class Main extends Application {
 		    
 		    
 		    Connection conn;
+		    
 			try {
+				
 				conn=DriverManager.getConnection("jdbc:ucanaccess://C:/dbTest/teamDB.accdb");
+				
 				
 				Statement st = conn.createStatement();
 				String newQuery = "SELECT * FROM tblUsr WHERE usrLogin=\"" + userName + "\";";
 				
 				ResultSet results = st.executeQuery(newQuery);
 				ResultSetMetaData resultsInfo = results.getMetaData();
+				
 				int numCols = resultsInfo.getColumnCount();
 				boolean loggedIn = false;
 				//System.out.println("Testing for user: " + userName + " and password: " + enteredCode);
+				
 				while (results.next()) {
+					
 				
 					if (userName.equals(results.getString(7))  && enteredCode.equals(results.getString(5))) {
 						//System.out.println(results.getString(7) + " = " + userName + " and " + results.getString(5) + " = " + enteredCode);
@@ -210,10 +216,10 @@ public class Main extends Application {
 		patientDataButton.setFont(Font.font("Calibri", 15));
 		patientDataButton.setMinWidth(200);
 		grid.add(patientDataButton, 0, 2, 2, 1);
-		Button userForm = new Button("User Form");
-		Button patientForm = new Button("Patient Form");
-		Button trialForm = new Button("Clinical Trial Form");
-		Button taskForm = new Button("Task Form");
+		Button userForm = new Button("Add Users");
+		Button patientForm = new Button("Add Patients");
+		Button trialForm = new Button("Add Clinical Trials");
+		Button taskForm = new Button("Add Tasks");
 
 		//Make all buttons same width
 		userForm.setMaxWidth(Double.MAX_VALUE);
@@ -278,7 +284,7 @@ public class Main extends Application {
 		TableView<Person> table = new TableView<Person>();
 		final ObservableList<Person> data =
 				FXCollections.observableArrayList(
-						new Person("Jacob", "Smith", "405-495-4343")
+						new Person("Jacob", "Smith", "405-495-4343", "jSmith")
 						);
 
 		final HBox hb = new HBox();
@@ -287,7 +293,7 @@ public class Main extends Application {
 		Stage stage2 = new Stage();
 
 		stage2.setTitle("User Information Table");
-		stage2.setWidth(450);
+		stage2.setWidth(640);
 		stage2.setHeight(550);
 
 		final Label label = new Label("Users");
@@ -349,9 +355,25 @@ public class Main extends Application {
 					}
 				}
 				);
+		
+		TableColumn userNameCol = new TableColumn("Username");
+		userNameCol.setMinWidth(200);
+		userNameCol.setCellValueFactory(
+				new PropertyValueFactory<Person, String>("UserName"));
+		userNameCol.setCellFactory(cellFactory);
+		userNameCol.setOnEditCommit(
+				new EventHandler<CellEditEvent<Person, String>>() {
+					@Override
+					public void handle(CellEditEvent<Person, String> t) {
+						((Person) t.getTableView().getItems().get(
+								t.getTablePosition().getRow())
+								).setUserName(t.getNewValue());
+					}
+				}
+				);
 
 		table.setItems(data);
-		table.getColumns().addAll(firstNameCol, lastNameCol, emailCol);
+		table.getColumns().addAll(firstNameCol, lastNameCol, emailCol, userNameCol);
 
 		final TextField addFirstName = new TextField();
 		addFirstName.setPromptText("First Name");
@@ -362,6 +384,9 @@ public class Main extends Application {
 		final TextField addEmail = new TextField();
 		addEmail.setMaxWidth(emailCol.getPrefWidth());
 		addEmail.setPromptText("Phone Number");
+		final TextField addUserName = new TextField();
+		addUserName.setMaxWidth(userNameCol.getPrefWidth());
+		addUserName.setPromptText("Username");
 
 		final Button addButton = new Button("Add");
 		addButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -370,14 +395,16 @@ public class Main extends Application {
 				data.add(new Person(
 						addFirstName.getText(),
 						addLastName.getText(),
-						addEmail.getText()));
+						addEmail.getText(),
+						addUserName.getText()));
 				addFirstName.clear();
 				addLastName.clear();
 				addEmail.clear();
-			}
+				addUserName.clear();
+			} 
 		});
 
-		hb.getChildren().addAll(addFirstName, addLastName, addEmail, addButton);
+		hb.getChildren().addAll(addFirstName, addLastName, addEmail, addUserName,addButton);
 		hb.setSpacing(3);
 
 		final VBox vbox = new VBox();
@@ -397,7 +424,7 @@ public class Main extends Application {
 		TableView<ClinicalTrials> table = new TableView<ClinicalTrials>();
 		final ObservableList<ClinicalTrials> data =
 				FXCollections.observableArrayList(
-						new ClinicalTrials("Name", "Trial", "Sponsor")
+						new ClinicalTrials("Trial", "Sponsor")
 						);
 
 		final HBox hb = new HBox();
@@ -409,7 +436,7 @@ public class Main extends Application {
 		stage2.setWidth(450);
 		stage2.setHeight(550);
 
-		final Label label = new Label("Users");
+		final Label label = new Label("Clinical Trials");
 		label.setFont(new Font("Arial", 20));
 
 		table.setEditable(true);
@@ -420,25 +447,10 @@ public class Main extends Application {
 			}
 		};
 
-		TableColumn nameCol = new TableColumn("Name");
-		nameCol.setMinWidth(100);
-		nameCol.setCellValueFactory(
-				new PropertyValueFactory<ClinicalTrials, String>("name"));
-		nameCol.setCellFactory(cellFactory);
-		nameCol.setOnEditCommit(
-				new EventHandler<CellEditEvent<ClinicalTrials, String>>() {
-					@Override
-					public void handle(CellEditEvent<ClinicalTrials, String> t) {
-						((ClinicalTrials) t.getTableView().getItems().get(
-								t.getTablePosition().getRow())
-								).setName(t.getNewValue());
-					}
-				}
-				);
 
 
 		TableColumn trialCol = new TableColumn("Trial ");
-		trialCol.setMinWidth(100);
+		trialCol.setMinWidth(200);
 		trialCol.setCellValueFactory(
 				new PropertyValueFactory<ClinicalTrials, String>("trial"));
 		trialCol.setCellFactory(cellFactory);
@@ -470,11 +482,9 @@ public class Main extends Application {
 				);
 
 		table.setItems(data);
-		table.getColumns().addAll(nameCol, trialCol, sponsorCol);
+		table.getColumns().addAll(trialCol, sponsorCol);
 
-		final TextField addName = new TextField();
-		addName.setPromptText("Name");
-		addName.setMaxWidth(nameCol.getPrefWidth());
+		
 		final TextField addTrial = new TextField();
 		addTrial.setMaxWidth(trialCol.getPrefWidth());
 		addTrial.setPromptText("Trial");
@@ -487,16 +497,14 @@ public class Main extends Application {
 			@Override
 			public void handle(ActionEvent e) {
 				data.add(new ClinicalTrials(
-						addName.getText(),
 						addTrial.getText(),
 						addSponsor.getText()));
-				addName.clear();
 				addTrial.clear();
 				addSponsor.clear();
 			}
 		});
 
-		hb.getChildren().addAll(addName, addTrial, addSponsor, addButton);
+		hb.getChildren().addAll(addTrial, addSponsor, addButton);
 		hb.setSpacing(3);
 
 		final VBox vbox = new VBox();
@@ -518,16 +526,16 @@ public class Main extends Application {
 		TableView<Tasks> table = new TableView<Tasks>();
 	    final ObservableList<Tasks> data =
 	            FXCollections.observableArrayList(
-	            new Tasks("Hannah", "Draw Blood", "8/12/2017")
+	            new Tasks("Hannah","Winslow", "Draw Blood", "8/12/2017")
 	            );
 	           
 	    final HBox hb = new HBox();
 	    Scene scene = new Scene(new Group());
         stage.setTitle("Tasks");
-        stage.setWidth(450);
+        stage.setWidth(550);
         stage.setHeight(550);
  
-        final Label label = new Label("Task Form");
+        final Label label = new Label("Tasks");
         label.setFont(new Font("Arial", 20));
  
         table.setEditable(true);
@@ -538,10 +546,10 @@ public class Main extends Application {
                     }
                 };
  
-        TableColumn firstPatientCol = new TableColumn("Patient Name");
+        TableColumn firstPatientCol = new TableColumn("First Name");
         firstPatientCol.setMinWidth(100);
         firstPatientCol.setCellValueFactory(
-            new PropertyValueFactory<Tasks, String>("PatientName"));
+            new PropertyValueFactory<Tasks, String>("PatientFName"));
         firstPatientCol.setCellFactory(TextFieldTableCell.forTableColumn());
         firstPatientCol.setOnEditCommit(
             new EventHandler<CellEditEvent<Tasks, String>>() {
@@ -549,7 +557,23 @@ public class Main extends Application {
                 public void handle(CellEditEvent<Tasks, String> t) {
                     ((Tasks) t.getTableView().getItems().get(
                             t.getTablePosition().getRow())
-                            ).setPatientName(t.getNewValue());
+                            ).setPatientFName(t.getNewValue());
+                }
+            }
+        );
+        
+        TableColumn lastPatientCol = new TableColumn("Last Name");
+        lastPatientCol.setMinWidth(100);
+        lastPatientCol.setCellValueFactory(
+            new PropertyValueFactory<Tasks, String>("PatientLName"));
+        lastPatientCol.setCellFactory(TextFieldTableCell.forTableColumn());
+        lastPatientCol.setOnEditCommit(
+            new EventHandler<CellEditEvent<Tasks, String>>() {
+                @Override
+                public void handle(CellEditEvent<Tasks, String> t) {
+                    ((Tasks) t.getTableView().getItems().get(
+                            t.getTablePosition().getRow())
+                            ).setPatientLName(t.getNewValue());
                 }
             }
         );
@@ -588,11 +612,14 @@ public class Main extends Application {
         );
  
         table.setItems(data);
-        table.getColumns().addAll(firstPatientCol, taskNameCol, dateCol);
+        table.getColumns().addAll(firstPatientCol, lastPatientCol,taskNameCol, dateCol);
  
-        final TextField addPatientName = new TextField();
-        addPatientName.setPromptText("Patient Name");
-        addPatientName.setMaxWidth(firstPatientCol.getPrefWidth());
+        final TextField addPatientFName = new TextField();
+        addPatientFName.setPromptText("First Name");
+        addPatientFName.setMaxWidth(firstPatientCol.getPrefWidth());
+        final TextField addPatientLName = new TextField();
+        addPatientLName.setPromptText("Last Name");
+        addPatientLName.setMaxWidth(lastPatientCol.getPrefWidth());
         final TextField addTaskName = new TextField();
         addTaskName.setMaxWidth(taskNameCol.getPrefWidth());
         addTaskName.setPromptText("Task Name");
@@ -605,16 +632,18 @@ public class Main extends Application {
             @Override
             public void handle(ActionEvent e) {
                 data.add(new Tasks(
-                        addPatientName.getText(),
+                        addPatientFName.getText(),
+                        addPatientLName.getText(),
                         addTaskName.getText(),
                         addDate.getText()));
-                addPatientName.clear();
+                addPatientFName.clear();
+                addPatientLName.clear();
                 addTaskName.clear();
                 addDate.clear();
             }
         });
  
-        hb.getChildren().addAll(addPatientName, addTaskName, addDate, addButton);
+        hb.getChildren().addAll(addPatientFName, addPatientLName,addTaskName, addDate, addButton);
         hb.setSpacing(3);
  
         final VBox vbox = new VBox();
@@ -631,23 +660,33 @@ public class Main extends Application {
 
 	//Class for tasks
 	public static class Tasks {		
-		private final SimpleStringProperty patientName;
+		private final SimpleStringProperty patientFName;
+		private final SimpleStringProperty patientLName;
 		private final SimpleStringProperty taskName;
 		private final SimpleStringProperty taskDueDate;
 
 
-		private Tasks(String patient, String name, String dueDate) {
-			this.patientName = new SimpleStringProperty(patient);
+		private Tasks(String patientFName,String patientLName, String name, String dueDate) {
+			this.patientFName = new SimpleStringProperty(patientFName);
+			this.patientLName = new SimpleStringProperty(patientLName);
 			this.taskName = new SimpleStringProperty(name);
 			this.taskDueDate = new SimpleStringProperty(dueDate);
 		}
 
-		public String getPatientName() {
-			return patientName.get();
+		public String getPatientFName() {
+			return patientFName.get();
 		}
 
-		public void setPatientName(String Name) {
-			patientName.set(Name);
+		public void setPatientFName(String Name) {
+			patientFName.set(Name);
+		}
+		
+		public String getPatientLName() {
+			return patientLName.get();
+		}
+
+		public void setPatientLName(String Name) {
+			patientLName.set(Name);
 		}
 
 
@@ -679,12 +718,14 @@ public class Main extends Application {
 		private final SimpleStringProperty firstName;
 		private final SimpleStringProperty lastName;
 		private final SimpleStringProperty phoneNumber;
+		private final SimpleStringProperty userName;
 		//private final SimpleStringProperty clinicalTrial;
 
-		private Person(String fName, String lName, String phoneNumber) {
+		private Person(String fName, String lName, String phoneNumber, String userName) {
 			this.firstName = new SimpleStringProperty(fName);
 			this.lastName = new SimpleStringProperty(lName);
 			this.phoneNumber = new SimpleStringProperty(phoneNumber);
+			this.userName = new SimpleStringProperty(userName);
 		}
 
 		public String getFirstName() {
@@ -709,6 +750,14 @@ public class Main extends Application {
 
 		public void setPhoneNumber(String fName) {
 			phoneNumber.set(fName);
+		}
+		
+		public String getUserName() {
+			return userName.get();
+		}
+		
+		public void setUserName(String aName) {
+			userName.set(aName);
 		}
 	}
 
@@ -783,23 +832,15 @@ public class Main extends Application {
 
 	public static class ClinicalTrials {
 
-		private final SimpleStringProperty name;
+		
 		private final SimpleStringProperty trial;
 		private final SimpleStringProperty sponsor;
 
 
-		private ClinicalTrials(String name, String trial, String sponsor) {
-			this.name = new SimpleStringProperty(name);
+		private ClinicalTrials(String trial, String sponsor) {
+			
 			this.trial = new SimpleStringProperty(trial);
-			this.sponsor = new SimpleStringProperty(trial);
-		}
-
-		public String getName() {
-			return name.get();
-		}
-
-		public void setName(String fName) {
-			name.set(fName);
+			this.sponsor = new SimpleStringProperty(sponsor);
 		}
 
 
@@ -821,12 +862,9 @@ public class Main extends Application {
 	}
 	/*
 	    class EditingCell2 extends TableCell<ClinicalTrials, String> {
-
 	        private TextField textField;
-
 	        public EditingCell2() {
 	        }
-
 	        @Override
 	        public void startEdit() {
 	            if (!isEmpty()) {
@@ -837,19 +875,15 @@ public class Main extends Application {
 	                textField.selectAll();
 	            }
 	        }
-
 	        @Override
 	        public void cancelEdit() {
 	            super.cancelEdit();
-
 	            setText((String) getItem());
 	            setGraphic(null);
 	        }
-
 	        @Override
 	        public void updateItem(String item, boolean empty) {
 	            super.updateItem(item, empty);
-
 	            if (empty) {
 	                setText(null);
 	                setGraphic(null);
@@ -866,7 +900,6 @@ public class Main extends Application {
 	                }
 	            }
 	        }
-
 	        private void createTextField() {
 	            textField = new TextField(getString());
 	            textField.setMinWidth(this.getWidth() - this.getGraphicTextGap()* 2);
@@ -880,7 +913,6 @@ public class Main extends Application {
 	                }
 	            });
 	        }
-
 	        private String getString() {
 	            return getItem() == null ? "" : getItem().toString();
 	        }
@@ -903,10 +935,10 @@ public class Main extends Application {
 
 	public void patientPage() {
 		Stage newStage = new Stage();
-		newStage.setTitle("Patient");
+		newStage.setTitle("Patients");
         BorderPane root = new BorderPane();
 		sceneData = new Scene(root,1400,400);
-		final Label label = new Label("Patient");
+		final Label label = new Label("Patients");
 		label.setFont(new Font("Arial", 20));
 		
 		//A series of box to create the form
