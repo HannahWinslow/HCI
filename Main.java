@@ -113,20 +113,74 @@ public class Main extends Application {
 		hBox.setAlignment(Pos.BOTTOM_RIGHT);
 		hBox.getChildren().add(signInButton);
 		root.add(hBox, 1, 4);
+		
+		
+	    
 
 		//Event handler for Sign in button
 		signInButton.setOnAction(e -> {
+			
+			String enteredCode = passwordTextField.getText();
+			String userName = userNameTextField.getText();
 			//Eventually, this will need to switch to a different
 			//scene based upon the level of the user, but for now,
 			//we will just switch to a scene that has all access
 			
 			//THIS WILL RUN A QUERY TO SEE IF USER IS IN DATABASE, IF SO, WILL LOG THEM IN
 			//make sure to keep track of their user permissions and only make buttons enabled if they have appropriate permissions
-			myStage.setScene(mainScene);
+			
+			//*************************************************************************
+			//USER QUERY HERE
+			
+			
+		    
+		    
+		    Connection conn;
+			try {
+				conn=DriverManager.getConnection("jdbc:ucanaccess://C:/dbTest/teamDB.accdb");
+				
+				Statement st = conn.createStatement();
+				String newQuery = "SELECT * FROM tblUsr WHERE usrLogin=\"" + userName + "\";";
+				
+				ResultSet results = st.executeQuery(newQuery);
+				ResultSetMetaData resultsInfo = results.getMetaData();
+				int numCols = resultsInfo.getColumnCount();
+				boolean loggedIn = false;
+				//System.out.println("Testing for user: " + userName + " and password: " + enteredCode);
+				while (results.next()) {
+				
+					if (userName.equals(results.getString(7))  && enteredCode.equals(results.getString(5))) {
+						//System.out.println(results.getString(7) + " = " + userName + " and " + results.getString(5) + " = " + enteredCode);
+						
+						//loggedIn = true;
+						myStage.setScene(mainScene);
+						loggedIn = true;
+						//loginScene = new Scene(root,400,400);
+						
+					} else {
+						//System.out.println("Results: " + results.getString(1) + ", " + results.getString(2) + ", " + results.getString(3)  + ", " + results.getString(4)  + ", " + results.getString(5)  + ", " + results.getString(6) + ", " + results.getString(7));
+						
+					}
+				
+				}
+				
+				conn.close();
+				
+				if (!loggedIn) {
+					throw new SQLException();
+				}
+			} catch (SQLException sqlException) {
+				// TODO Auto-generated catch block
+				//e.printStackTrace();
+				JOptionPane.showMessageDialog(null, "Incorrect username and password!", "InfoBox: " + "Bad Data", JOptionPane.INFORMATION_MESSAGE);
+			}
+			
+			//myStage.setScene(mainScene);
 
 		});
 
 		//Create scene
+		
 		loginScene = new Scene(root,400,400);
 	}
 
