@@ -418,6 +418,59 @@ public class Main extends Application {
 		stage2.show();
 
 	}
+	
+	public ObservableList<ClinicalTrials> getTrialList() {
+		ObservableList<ClinicalTrials> returnList = FXCollections.observableArrayList();
+		
+		Connection conn;
+		try {
+			conn=DriverManager.getConnection("jdbc:ucanaccess://C:/dbTest/teamDB.accdb");
+			
+			Statement st = conn.createStatement();
+			String newQuery = "SELECT * FROm tblProtocol;";
+			ResultSet results = st.executeQuery(newQuery);
+			ResultSetMetaData resultsInfo = results.getMetaData();
+			int numCols = resultsInfo.getColumnCount();
+			while (results.next()) {
+				ClinicalTrials tempTrial = new ClinicalTrials(results.getString(2), results.getString(3));
+				
+				returnList.add(tempTrial);
+
+			
+			}
+			
+			conn.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "An unknown error occurred!", "InfoBox: " + "Bad Data", JOptionPane.INFORMATION_MESSAGE);
+		}
+		
+		
+		return returnList;
+	}
+	
+	public void addNewTrial(String trial, String sponsor) {
+		String updateQry = "INSERT INTO tblProtocol (protSponsor, protNumber) VALUES(\"" + sponsor + "\", \"" + trial + "\");";
+		
+		//create DB connection
+				Connection conn;
+				try {
+					conn=DriverManager.getConnection("jdbc:ucanaccess://C:/dbTest/teamDB.accdb");
+					
+					Statement st = conn.createStatement();
+					st.executeUpdate(updateQry);
+					//st.executeQuery(updateQry);
+					
+					conn.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					//e.printStackTrace();
+					JOptionPane.showMessageDialog(null, "An error occurred with your entry!", "InfoBox: " + "Bad Data", JOptionPane.INFORMATION_MESSAGE);
+					
+				}
+		
+	}
 
 	public void trialPage() {
 
@@ -480,6 +533,9 @@ public class Main extends Application {
 					}
 				}
 				);
+		
+		data.clear();
+		data.setAll(getTrialList());
 
 		table.setItems(data);
 		table.getColumns().addAll(trialCol, sponsorCol);
@@ -496,9 +552,9 @@ public class Main extends Application {
 		addButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
-				data.add(new ClinicalTrials(
-						addTrial.getText(),
-						addSponsor.getText()));
+				addNewTrial(addSponsor.getText(),addTrial.getText());
+				data.clear();
+				data.addAll(getTrialList());
 				addTrial.clear();
 				addSponsor.clear();
 			}
