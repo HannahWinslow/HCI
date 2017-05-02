@@ -228,6 +228,11 @@ public class Main extends Application {
 		grid.add(taskForm, 0, 7, 2, 1);
 
 		//Listeners for buttons
+		patientDataButton.setOnAction(e -> {
+			searchPatient();
+
+		});
+		
 		taskForm.setOnAction(e -> {
 			taskPage();
 
@@ -1198,7 +1203,247 @@ public class Main extends Application {
 			notes = newNotes;
 		}
 	}
+	
+	private final ObservableList<Patient> searchPatient =FXCollections.observableArrayList();
 
+	public void searchPatient() {
+		Stage stage2 = new Stage();
+		stage2.setTitle("Search Patient");
+		BorderPane root = new BorderPane();
+		sceneData = new Scene(root,400,400);
+		final Label label = new Label("Patient");
+		final Label label1 = new Label("Press the button for the field you want to search for or go back to main menu: ");
+		label.setFont(new Font("Arial", 20));
+		label1.setFont(new Font("Arial", 12));
+		stage2.setScene(sceneData);
+		//A series of box to create the form
+		HBox box = new HBox();
+		VBox box3 = new VBox();
+		HBox box1 = new HBox();
+
+		//text field to add patient
+		TextField textField = new TextField ();
+		textField.setPromptText("First Name");
+		TextField textField5 = new TextField();
+		textField5.setPromptText("Last Name");
+		TextField textField1 = new TextField ();
+		textField1.setPromptText("Sponsor");
+		TextField textField2 = new TextField ();
+		textField2.setPromptText("Case Number");
+		TextField textField3 = new TextField ();
+		textField3.setPromptText("Protocol");
+		TextField textField4 = new TextField ();
+		textField4.setPromptText("Note");
+
+
+		//create a table to see data
+		TableView table = new TableView();
+		table.setEditable(true);
+
+		Callback<TableColumn, TableCell> cellFactory =
+				new Callback<TableColumn, TableCell>() {
+			public TableCell call(TableColumn p) {
+				return new EditingCell();
+			}
+		};
+
+		TableColumn nameCol = new TableColumn("First Name");
+		nameCol.setMinWidth(100);
+		nameCol.setCellValueFactory(new PropertyValueFactory<Patient, String>("FirstName"));
+		nameCol.setCellFactory(TextFieldTableCell.forTableColumn());
+		nameCol.setOnEditCommit(
+				new EventHandler<CellEditEvent<Patient, String>>() {
+					@Override
+					public void handle(CellEditEvent<Patient, String> t) {
+						((Patient) t.getTableView().getItems().get(
+								t.getTablePosition().getRow())
+								).setFirstName(t.getNewValue());
+					}
+				}
+				);
+
+		TableColumn lastCol = new TableColumn("Last Name");
+		lastCol.setMinWidth(100);
+		lastCol.setCellValueFactory(new PropertyValueFactory<Patient, String>("LastName"));
+		lastCol.setCellFactory(TextFieldTableCell.forTableColumn());
+		lastCol.setOnEditCommit(
+				new EventHandler<CellEditEvent<Patient, String>>() {
+					@Override
+					public void handle(CellEditEvent<Patient, String> t) {
+						((Patient) t.getTableView().getItems().get(
+								t.getTablePosition().getRow())
+								).setLastName(t.getNewValue());
+					}
+				}
+				);
+
+		TableColumn ssnCol = new TableColumn("Sponsor");
+		ssnCol.setMinWidth(100);
+		ssnCol.setCellValueFactory(new PropertyValueFactory<Patient, String>("Sponsor"));
+		ssnCol.setCellFactory(TextFieldTableCell.forTableColumn());
+		ssnCol.setOnEditCommit(
+				new EventHandler<CellEditEvent<Patient, String>>() {
+					@Override
+					public void handle(CellEditEvent<Patient, String> t) {
+						((Patient) t.getTableView().getItems().get(
+								t.getTablePosition().getRow())
+								).setSponsor(t.getNewValue());
+					}
+				}
+				);
+
+		TableColumn genderCol = new TableColumn("Case Number");
+		genderCol.setMinWidth(100);
+		genderCol.setCellValueFactory(new PropertyValueFactory<Patient, String>("CaseNumber"));
+		genderCol.setCellFactory(TextFieldTableCell.forTableColumn());
+		genderCol.setOnEditCommit(
+				new EventHandler<CellEditEvent<Patient, String>>() {
+					@Override
+					public void handle(CellEditEvent<Patient, String> t) {
+						((Patient) t.getTableView().getItems().get(
+								t.getTablePosition().getRow())
+								).setCaseNumber(t.getNewValue());
+					}
+				}
+				);
+
+		TableColumn protocolNumberCol = new TableColumn("Notes");
+		protocolNumberCol.setMinWidth(100);
+		protocolNumberCol.setCellValueFactory(new PropertyValueFactory<Patient, String>("Notes"));
+		protocolNumberCol.setCellFactory(TextFieldTableCell.forTableColumn());
+		protocolNumberCol.setOnEditCommit(
+				new EventHandler<CellEditEvent<Patient, String>>() {
+					@Override
+					public void handle(CellEditEvent<Patient, String> t) {
+						((Patient) t.getTableView().getItems().get(
+								t.getTablePosition().getRow())
+								).setNotes(t.getNewValue());
+					}
+				}
+				);
+
+		TableColumn protocolCol = new TableColumn("protocol");
+		protocolCol.setMinWidth(100);
+		protocolCol.setCellValueFactory(new PropertyValueFactory<Patient, String>("Protocol"));
+		protocolCol.setCellFactory(TextFieldTableCell.forTableColumn());
+		protocolCol.setOnEditCommit(
+				new EventHandler<CellEditEvent<Patient, String>>() {
+					@Override
+					public void handle(CellEditEvent<Patient, String> t) {
+						((Patient) t.getTableView().getItems().get(
+								t.getTablePosition().getRow())
+								).setProtocol(t.getNewValue());
+					}
+				}
+				);
+
+		table.getColumns().addAll(nameCol, lastCol, ssnCol, genderCol, protocolCol, protocolNumberCol);
+		VBox boxTable = new VBox();
+		table.setItems(searchPatient);
+		boxTable.setSpacing(5);
+		boxTable.setPadding(new Insets(10, 0, 0, 10));
+		boxTable.getChildren().addAll(label, table);
+		
+		Button search = new Button( "Search" );
+		search.setOnAction( (e) -> {
+			for (int i = 0; i < ptList.size(); i++)
+			{
+				if (ptList.get(i).getFirstName().toLowerCase().equals(textField.getText().toLowerCase()))
+				{
+					searchPatient.add(new Patient(dataPatient.get(i).getFirstName(), dataPatient.get(i).getLastName(), dataPatient.get(i).getSponsor(), dataPatient.get(i).getCaseNumber(), dataPatient.get(i).getProtocol(), dataPatient.get(i).getNotes()));
+				}
+				if (ptList.get(i).getLastName().toLowerCase().equals(textField5.getText().toLowerCase()))
+				{
+					searchPatient.add(new Patient(dataPatient.get(i).getFirstName(), dataPatient.get(i).getLastName(), dataPatient.get(i).getSponsor(), dataPatient.get(i).getCaseNumber(), dataPatient.get(i).getProtocol(), dataPatient.get(i).getNotes()));
+				}
+				if (ptList.get(i).getSponsor().toLowerCase().equals(textField1.getText().toLowerCase()))
+				{
+					searchPatient.add(new Patient(dataPatient.get(i).getFirstName(), dataPatient.get(i).getLastName(), dataPatient.get(i).getSponsor(), dataPatient.get(i).getCaseNumber(), dataPatient.get(i).getProtocol(), dataPatient.get(i).getNotes()));
+				}
+				if (ptList.get(i).getCaseNumber().toLowerCase().equals(textField2.getText().toLowerCase()))
+				{
+					searchPatient.add(new Patient(dataPatient.get(i).getFirstName(), dataPatient.get(i).getLastName(), dataPatient.get(i).getSponsor(), dataPatient.get(i).getCaseNumber(), dataPatient.get(i).getProtocol(), dataPatient.get(i).getNotes()));
+				}
+				if (ptList.get(i).getProtocol().toLowerCase().equals(textField3.getText().toLowerCase()))
+				{
+					searchPatient.add(new Patient(dataPatient.get(i).getFirstName(), dataPatient.get(i).getLastName(), dataPatient.get(i).getSponsor(), dataPatient.get(i).getCaseNumber(), dataPatient.get(i).getProtocol(), dataPatient.get(i).getNotes()));
+				}
+				if (ptList.get(i).getNotes().toLowerCase().equals(textField4.getText().toLowerCase()))
+				{
+					searchPatient.add(new Patient(dataPatient.get(i).getFirstName(), dataPatient.get(i).getLastName(), dataPatient.get(i).getSponsor(), dataPatient.get(i).getCaseNumber(), dataPatient.get(i).getProtocol(), dataPatient.get(i).getNotes()));
+				}
+			}
+			textField.clear();
+			textField1.clear();
+			textField2.clear();
+			textField3.clear();
+			textField4.clear();
+			textField5.clear();
+		} );
+		
+		Button clear = new Button( "Clear" );
+		clear.setOnAction( (e) -> {
+			textField.clear();
+			textField1.clear();
+			textField2.clear();
+			textField3.clear();
+			textField4.clear();
+			textField5.clear();
+		} );
+		
+		HBox searchBox = new HBox();
+		
+		Button searchName = new Button("Search First Name");
+		searchName.setOnAction( (e) -> {
+			searchBox.getChildren().clear();
+			searchBox.getChildren().addAll(textField, search, clear);
+			box3.getChildren().addAll(searchBox);
+		});
+		
+		Button searchLName = new Button("Search Last Name");
+		searchLName.setOnAction( (e) -> {
+			searchBox.getChildren().clear();
+			searchBox.getChildren().addAll(textField5, search, clear);
+			box3.getChildren().addAll(searchBox);
+		});
+		
+		Button searchSponsor = new Button("Search Sponsor");
+		searchSponsor.setOnAction( (e) -> {
+			searchBox.getChildren().clear();
+			searchBox.getChildren().addAll(textField1, search, clear);
+			box3.getChildren().addAll(searchBox);
+		});
+		
+		Button searchCaseNumber = new Button("Search Case Number");
+		searchCaseNumber.setOnAction( (e) -> {
+			searchBox.getChildren().clear();
+			searchBox.getChildren().addAll(textField2, search, clear);
+			box3.getChildren().addAll(searchBox);
+		});
+		
+		Button searchProtocol = new Button("Search Protocol");
+		searchProtocol.setOnAction( (e) -> {
+			searchBox.getChildren().clear();
+			searchBox.getChildren().addAll(textField3, search, clear);
+			box3.getChildren().addAll(searchBox);
+		});
+
+		Button back = new Button( "Back to Main Menu" );
+		back.setOnAction( (e) -> {
+			stage2.close();
+			mainPage();
+		} );
+
+		box1.getChildren().addAll(searchName, searchLName, searchSponsor, searchCaseNumber, searchProtocol, back);
+		box1.setSpacing(3);
+
+		box3.getChildren().addAll(label, table, label1, box1);
+		box3.setSpacing(10);
+		root.setCenter(box3);
+		stage2.show();
+
+	}
+	
 	public static void main(String[] args) {
 		launch(args);
 	}
