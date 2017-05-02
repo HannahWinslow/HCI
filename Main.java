@@ -1211,7 +1211,7 @@ public class Main extends Application {
 
 
 	public void searchPatient() {
-		private final ObservableList<Patient> data1 =
+		ObservableList<Patient> data1 =
 			FXCollections.observableArrayList(
 					new Patient("Jacob", "Smith", "123", "M", "surgery", "123"),
 					new Patient("Isabella", "Johnson", "123", "M", "surgery", "123"),
@@ -1220,7 +1220,7 @@ public class Main extends Application {
 					new Patient("Michael", "Brown", "123", "M", "surgery", "123")
 					);
 		
-		private final ObservableList<Patient> searchPatient =FXCollections.observableArrayList();
+		ObservableList<Patient> searchPatient =FXCollections.observableArrayList();
 		
 		Stage stage2 = new Stage();
 		stage2.setTitle("Search Patient");
