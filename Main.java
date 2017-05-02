@@ -1023,9 +1023,9 @@ public class Main extends Application {
 		    addNewPt(ptFName, ptLName, ptSponsor, ptNumber, ptCaseNo, ptNotes);
 		    //System.out.println("New patient added");
 		    
-		    data.clear();
-		    data.addAll(getPtList());
-		    table.setItems(data);
+		    dataPatient.clear();
+		    dataPatient.addAll(getPtList());
+		    table.setItems(dataPatient);
 			
 			//addNewPt();
 			textField.clear();
