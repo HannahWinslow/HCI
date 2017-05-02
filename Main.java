@@ -1211,21 +1211,21 @@ public class Main extends Application {
 
 
 	public void searchPatient() {
-		ObservableList<Patient> data1 =
-			FXCollections.observableArrayList(
-					new Patient("Jacob", "Smith", "123", "M", "surgery", "123"),
-					new Patient("Isabella", "Johnson", "123", "M", "surgery", "123"),
-					new Patient("Ethan", "Williams", "123", "M", "surgery", "123"),
-					new Patient("Emma", "Jones", "123", "M", "surgery", "123"),
-					new Patient("Michael", "Brown", "123", "M", "surgery", "123")
-					);
-		
+//		ObservableList<Patient> data1 =
+//			FXCollections.observableArrayList(
+//					new Patient("Jacob", "Smith", "123", "M", "surgery", "123"),
+//					new Patient("Isabella", "Johnson", "123", "M", "surgery", "123"),
+//					new Patient("Ethan", "Williams", "123", "M", "surgery", "123"),
+//					new Patient("Emma", "Jones", "123", "M", "surgery", "123"),
+//					new Patient("Michael", "Brown", "123", "M", "surgery", "123")
+//					);
+		ObservableList<Patient> data1 =FXCollections.observableArrayList();
 		ObservableList<Patient> searchPatient =FXCollections.observableArrayList();
 		
 		Stage stage2 = new Stage();
 		stage2.setTitle("Search Patient");
 		BorderPane root = new BorderPane();
-		sceneData = new Scene(root,400,400);
+		sceneData = new Scene(root,800,400);
 		final Label label = new Label("Patient");
 		final Label label1 = new Label("Press the button for the field you want to search for or go back to main menu: ");
 		label.setFont(new Font("Arial", 20));
@@ -1323,7 +1323,7 @@ public class Main extends Application {
 				);
 
 		TableColumn protocolNumberCol = new TableColumn("Notes");
-		protocolNumberCol.setMinWidth(100);
+		protocolNumberCol.setMinWidth(300);
 		protocolNumberCol.setCellValueFactory(new PropertyValueFactory<Patient, String>("Notes"));
 		protocolNumberCol.setCellFactory(TextFieldTableCell.forTableColumn());
 		protocolNumberCol.setOnEditCommit(
@@ -1354,40 +1354,70 @@ public class Main extends Application {
 
 		table.getColumns().addAll(nameCol, lastCol, ssnCol, genderCol, protocolCol, protocolNumberCol);
 		VBox boxTable = new VBox();
-		table.setItems(searchPatient);
+		//table.setItems(searchPatient);
+		data1.addAll(getPtList());
+		table.setItems(data1);
 		boxTable.setSpacing(5);
 		boxTable.setPadding(new Insets(10, 0, 0, 10));
 		boxTable.getChildren().addAll(label, table);
 		
 		Button search = new Button( "Search" );
 		search.setOnAction( (e) -> {
-			for (int i = 0; i < dataPatient.size(); i++)
+//			String newFName = "";
+//			String newLName = "";
+//			String newSponsor = "";
+//			String NewCase = "";
+//			String newProtocol = "";
+//			String newNotes = "";
+			
+			table.setItems(getPtList());
+			searchPatient.clear();
+			for (int i = 0; i < data1.size(); i++)
 			{
-				if (data1.get(i).getFirstName().toLowerCase().equals(textField.getText().toLowerCase()))
-				{
-					searchPatient.add(new Patient(dataPatient.get(i).getFirstName(), dataPatient.get(i).getLastName(), dataPatient.get(i).getSponsor(), dataPatient.get(i).getCaseNumber(), dataPatient.get(i).getProtocol(), dataPatient.get(i).getNotes()));
+				String newFName = "";
+				String newLName = "";
+				String newSponsor = "";
+				String newCase = "";
+				String newProtocol = "";
+				String newNotes = "";
+				try {
+					newFName = data1.get(i).getFirstName().toLowerCase();
+					newLName = data1.get(i).getLastName().toLowerCase();
+					newSponsor = data1.get(i).getSponsor().toLowerCase();
+					newCase = data1.get(i).getCaseNumber().toLowerCase();
+					newProtocol = data1.get(i).getProtocol().toLowerCase();
+					newNotes = data1.get(i).getNotes().toLowerCase();
+				} catch (Exception newNPE) {
+					
 				}
-				if (data1.get(i).getLastName().toLowerCase().equals(textField5.getText().toLowerCase()))
+				
+				
+				if (newFName.equals(textField.getText().toLowerCase()))
 				{
-					searchPatient.add(new Patient(dataPatient.get(i).getFirstName(), dataPatient.get(i).getLastName(), dataPatient.get(i).getSponsor(), dataPatient.get(i).getCaseNumber(), dataPatient.get(i).getProtocol(), dataPatient.get(i).getNotes()));
+					searchPatient.add(new Patient(data1.get(i).getFirstName(), data1.get(i).getLastName(), data1.get(i).getSponsor(), data1.get(i).getCaseNumber(), data1.get(i).getProtocol(), data1.get(i).getNotes()));
 				}
-				if (data1.get(i).getSponsor().toLowerCase().equals(textField1.getText().toLowerCase()))
+				if (newLName.equals(textField5.getText().toLowerCase()))
 				{
-					searchPatient.add(new Patient(dataPatient.get(i).getFirstName(), dataPatient.get(i).getLastName(), dataPatient.get(i).getSponsor(), dataPatient.get(i).getCaseNumber(), dataPatient.get(i).getProtocol(), dataPatient.get(i).getNotes()));
+					searchPatient.add(new Patient(data1.get(i).getFirstName(), data1.get(i).getLastName(), data1.get(i).getSponsor(), data1.get(i).getCaseNumber(), data1.get(i).getProtocol(), data1.get(i).getNotes()));
 				}
-				if (data1.get(i).getCaseNumber().toLowerCase().equals(textField2.getText().toLowerCase()))
+				if (newSponsor.equals(textField1.getText().toLowerCase()))
 				{
-					searchPatient.add(new Patient(dataPatient.get(i).getFirstName(), dataPatient.get(i).getLastName(), dataPatient.get(i).getSponsor(), dataPatient.get(i).getCaseNumber(), dataPatient.get(i).getProtocol(), dataPatient.get(i).getNotes()));
+					searchPatient.add(new Patient(data1.get(i).getFirstName(), data1.get(i).getLastName(), data1.get(i).getSponsor(), data1.get(i).getCaseNumber(), data1.get(i).getProtocol(), data1.get(i).getNotes()));
 				}
-				if (data1.get(i).getProtocol().toLowerCase().equals(textField3.getText().toLowerCase()))
+				if (newCase.equals(textField2.getText().toLowerCase()))
 				{
-					searchPatient.add(new Patient(dataPatient.get(i).getFirstName(), dataPatient.get(i).getLastName(), dataPatient.get(i).getSponsor(), dataPatient.get(i).getCaseNumber(), dataPatient.get(i).getProtocol(), dataPatient.get(i).getNotes()));
+					searchPatient.add(new Patient(data1.get(i).getFirstName(), data1.get(i).getLastName(), data1.get(i).getSponsor(), data1.get(i).getCaseNumber(), data1.get(i).getProtocol(), data1.get(i).getNotes()));
 				}
-				if (data1.get(i).getNotes().toLowerCase().equals(textField4.getText().toLowerCase()))
+				if (newProtocol.equals(textField3.getText().toLowerCase()))
 				{
-					searchPatient.add(new Patient(dataPatient.get(i).getFirstName(), dataPatient.get(i).getLastName(), dataPatient.get(i).getSponsor(), dataPatient.get(i).getCaseNumber(), dataPatient.get(i).getProtocol(), dataPatient.get(i).getNotes()));
+					searchPatient.add(new Patient(data1.get(i).getFirstName(), data1.get(i).getLastName(), data1.get(i).getSponsor(), data1.get(i).getCaseNumber(), data1.get(i).getProtocol(), data1.get(i).getNotes()));
+				}
+				if (newNotes.equals(textField4.getText().toLowerCase()))
+				{
+					searchPatient.add(new Patient(data1.get(i).getFirstName(), data1.get(i).getLastName(), data1.get(i).getSponsor(), data1.get(i).getCaseNumber(), data1.get(i).getProtocol(), data1.get(i).getNotes()));
 				}
 			}
+			table.setItems(searchPatient);
 			textField.clear();
 			textField1.clear();
 			textField2.clear();
