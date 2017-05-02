@@ -1411,6 +1411,7 @@ public class Main extends Application {
 		Button searchName = new Button("Search First Name");
 		searchName.setOnAction( (e) -> {
 			searchBox.getChildren().clear();
+			box3.getChildren().remove(searchBox);
 			searchBox.getChildren().addAll(textField, search, clear);
 			box3.getChildren().addAll(searchBox);
 		});
@@ -1418,6 +1419,7 @@ public class Main extends Application {
 		Button searchLName = new Button("Search Last Name");
 		searchLName.setOnAction( (e) -> {
 			searchBox.getChildren().clear();
+			box3.getChildren().remove(searchBox);
 			searchBox.getChildren().addAll(textField5, search, clear);
 			box3.getChildren().addAll(searchBox);
 		});
@@ -1425,6 +1427,7 @@ public class Main extends Application {
 		Button searchSponsor = new Button("Search Sponsor");
 		searchSponsor.setOnAction( (e) -> {
 			searchBox.getChildren().clear();
+			box3.getChildren().remove(searchBox);
 			searchBox.getChildren().addAll(textField1, search, clear);
 			box3.getChildren().addAll(searchBox);
 		});
@@ -1432,6 +1435,7 @@ public class Main extends Application {
 		Button searchCaseNumber = new Button("Search Case Number");
 		searchCaseNumber.setOnAction( (e) -> {
 			searchBox.getChildren().clear();
+			box3.getChildren().remove(searchBox);
 			searchBox.getChildren().addAll(textField2, search, clear);
 			box3.getChildren().addAll(searchBox);
 		});
@@ -1439,6 +1443,7 @@ public class Main extends Application {
 		Button searchProtocol = new Button("Search Protocol");
 		searchProtocol.setOnAction( (e) -> {
 			searchBox.getChildren().clear();
+			box3.getChildren().remove(searchBox);
 			searchBox.getChildren().addAll(textField3, search, clear);
 			box3.getChildren().addAll(searchBox);
 		});
