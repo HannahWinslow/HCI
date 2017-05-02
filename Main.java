@@ -887,10 +887,14 @@ public class Main extends Application {
 	    }
 	 */
 
-	 private final ObservableList<Patient> data =
-		        FXCollections.observableArrayList(
-		            new Patient("Jacob", "Smith", "Hoo", "M", "surgery", "Ha")
-		        );
+	 private final ObservableList<Patient> dataPatient =
+			FXCollections.observableArrayList(
+					new Patient("Jacob", "Smith", "123", "M", "surgery", "123"),
+					new Patient("Isabella", "Johnson", "123", "M", "surgery", "123"),
+					new Patient("Ethan", "Williams", "123", "M", "surgery", "123"),
+					new Patient("Emma", "Jones", "123", "M", "surgery", "123"),
+					new Patient("Michael", "Brown", "123", "M", "surgery", "123")
+					);
 	
 	
 	Scene sceneData;
@@ -1204,7 +1208,7 @@ public class Main extends Application {
 		}
 	}
 	
-	private final ObservableList<Patient> searchPatient =FXCollections.observableArrayList();
+private final ObservableList<Patient> searchPatient =FXCollections.observableArrayList();
 
 	public void searchPatient() {
 		Stage stage2 = new Stage();
@@ -1346,29 +1350,29 @@ public class Main extends Application {
 		
 		Button search = new Button( "Search" );
 		search.setOnAction( (e) -> {
-			for (int i = 0; i < ptList.size(); i++)
+			for (int i = 0; i < dataPatient.size(); i++)
 			{
-				if (ptList.get(i).getFirstName().toLowerCase().equals(textField.getText().toLowerCase()))
+				if (dataPatient.get(i).getFirstName().toLowerCase().equals(textField.getText().toLowerCase()))
 				{
 					searchPatient.add(new Patient(dataPatient.get(i).getFirstName(), dataPatient.get(i).getLastName(), dataPatient.get(i).getSponsor(), dataPatient.get(i).getCaseNumber(), dataPatient.get(i).getProtocol(), dataPatient.get(i).getNotes()));
 				}
-				if (ptList.get(i).getLastName().toLowerCase().equals(textField5.getText().toLowerCase()))
+				if (dataPatient.get(i).getLastName().toLowerCase().equals(textField5.getText().toLowerCase()))
 				{
 					searchPatient.add(new Patient(dataPatient.get(i).getFirstName(), dataPatient.get(i).getLastName(), dataPatient.get(i).getSponsor(), dataPatient.get(i).getCaseNumber(), dataPatient.get(i).getProtocol(), dataPatient.get(i).getNotes()));
 				}
-				if (ptList.get(i).getSponsor().toLowerCase().equals(textField1.getText().toLowerCase()))
+				if (dataPatient.get(i).getSponsor().toLowerCase().equals(textField1.getText().toLowerCase()))
 				{
 					searchPatient.add(new Patient(dataPatient.get(i).getFirstName(), dataPatient.get(i).getLastName(), dataPatient.get(i).getSponsor(), dataPatient.get(i).getCaseNumber(), dataPatient.get(i).getProtocol(), dataPatient.get(i).getNotes()));
 				}
-				if (ptList.get(i).getCaseNumber().toLowerCase().equals(textField2.getText().toLowerCase()))
+				if (dataPatient.get(i).getCaseNumber().toLowerCase().equals(textField2.getText().toLowerCase()))
 				{
 					searchPatient.add(new Patient(dataPatient.get(i).getFirstName(), dataPatient.get(i).getLastName(), dataPatient.get(i).getSponsor(), dataPatient.get(i).getCaseNumber(), dataPatient.get(i).getProtocol(), dataPatient.get(i).getNotes()));
 				}
-				if (ptList.get(i).getProtocol().toLowerCase().equals(textField3.getText().toLowerCase()))
+				if (dataPatient.get(i).getProtocol().toLowerCase().equals(textField3.getText().toLowerCase()))
 				{
 					searchPatient.add(new Patient(dataPatient.get(i).getFirstName(), dataPatient.get(i).getLastName(), dataPatient.get(i).getSponsor(), dataPatient.get(i).getCaseNumber(), dataPatient.get(i).getProtocol(), dataPatient.get(i).getNotes()));
 				}
-				if (ptList.get(i).getNotes().toLowerCase().equals(textField4.getText().toLowerCase()))
+				if (dataPatient.get(i).getNotes().toLowerCase().equals(textField4.getText().toLowerCase()))
 				{
 					searchPatient.add(new Patient(dataPatient.get(i).getFirstName(), dataPatient.get(i).getLastName(), dataPatient.get(i).getSponsor(), dataPatient.get(i).getCaseNumber(), dataPatient.get(i).getProtocol(), dataPatient.get(i).getNotes()));
 				}
