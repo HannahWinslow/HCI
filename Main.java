@@ -323,7 +323,9 @@ public class Main extends Application {
 	 * 
 	 */
 	public void userPage() {
-
+		
+		//create layout
+		
 		GridPane grid = new GridPane();
 		grid.setHgap(10);
 		grid.setVgap(12);
@@ -334,7 +336,8 @@ public class Main extends Application {
 		grid.add(hbButtons, 8, 15, 15, 1);
 
 		userScene = new Scene(grid,400,400);
-
+		
+		//create table to add  each user 
 		TableView<Person> table = new TableView<Person>();
 		final ObservableList<Person> data =
 				FXCollections.observableArrayList(
@@ -360,7 +363,7 @@ public class Main extends Application {
 				return new EditingCell();
 			}
 		};
-
+		//the table consists of first name, last name, and phone number
 		TableColumn firstNameCol = new TableColumn("First Name");
 		firstNameCol.setMinWidth(100);
 		firstNameCol.setCellValueFactory(
@@ -409,7 +412,7 @@ public class Main extends Application {
 					}
 				}
 				);
-		
+		//column for username 
 		TableColumn userNameCol = new TableColumn("Username");
 		userNameCol.setMinWidth(200);
 		userNameCol.setCellValueFactory(
@@ -473,7 +476,7 @@ public class Main extends Application {
 		stage2.show();
 
 	}
-	
+	//connecting to the db
 	public ObservableList<ClinicalTrials> getTrialList() {
 		ObservableList<ClinicalTrials> returnList = FXCollections.observableArrayList();
 		
@@ -901,7 +904,7 @@ public class Main extends Application {
 	}
 
 	/*
-	 * Class for users
+	 * Class for user form
 	 * Author: Betsie Koshy 
 	 * 
 	 */
