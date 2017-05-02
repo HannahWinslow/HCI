@@ -114,7 +114,7 @@ public class Main extends Application {
 		hBox.getChildren().add(signInButton);
 		root.add(hBox, 1, 4);
 		
-		
+		signInButton.setDefaultButton(true);
 	    
 
 		//Event handler for Sign in button
